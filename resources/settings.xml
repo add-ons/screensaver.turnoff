@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings>
-    <setting label="30010" type="enum" id="method" lvalues="30011|30012|30013|30014|30015" default="1"/>
-    <setting label="30100" type="bool" id="logoff" default="true"/>
+  <category id="display" label="30000">
+    <setting id="display_method" type="enum" label="31001" lvalues="31100|31110|31120|31130|31140|31150|31160|31170" default="1"/>
+    <setting id="display_label" type="text" label="31002" enable="false" />
+  </category>
+  <category id="power" label="40000">
+    <setting id="power_method" type="enum" label="41001" lvalues="41100|41110|41120|41130|41140|41150|41160|41170" default="0"/>
+    <setting id="power_label" type="text" label="41002" enable="false" />
+  </category>
+  <category id="options" label="80000">
+    <setting type="lsep" label="80001"/>
+    <setting id="logoff" type="bool" label="80500" default="false"/>
+    <setting id="mute" type="bool" label="80600" default="false"/>
+  </category>
 </settings>

@@ -4,12 +4,31 @@
   <!-- For the add on itself -->
 
   <!-- For the settings -->
-  <string id="30010">Used method</string>
-  <string id="30011">Do nothing</string>
-  <string id="30012">Raspberry Pi (vcgencmd)</string>
-  <string id="30013">CEC Standby (internal)</string>
-  <string id="30014">DPMS (internal)</string>
-  <string id="30015">X11 DPMS (xset)</string>
-  <string id="30100">Log off user when (activating screensaver)</string>
+  <string id="30000">Display</string>
+  <string id="31001">Display method</string>
+  <string id="31002">Not all 'Display methods' work on every system. Carefully test.</string>
+  <string id="31100">Do nothing</string>
+  <string id="31110">CEC Standby (built-in)</string>
+  <string id="31120">Raspberry Pi (using vcgencmd)</string>
+  <string id="31130">DPMS (built-in)</string>
+  <string id="31140">DPMS (using xset)</string>
+  <string id="31150">DPMS (using vbetool)</string>
+  <string id="31160">DPMS (using xrandr)</string>
+  <string id="31170">Android CEC (kernel)</string>
+  <string id="40000">Power</string>
+  <string id="41001">Power method</string>
+  <string id="41002">Don't change this unless you know exactly what you are doing.</string>
+  <string id="41100">Do nothing</string>
+  <string id="41110">Suspend (built-in)</string>
+  <string id="41120">Hibernate (built-in)</string>
+  <string id="41130">Quit (built-in)</string>
+  <string id="41140">Shutdown action (built-in)</string>
+  <string id="41150">Reboot (built-in)</string>
+  <string id="41260">Powerdown (built-in)</string>
+  <string id="41170">Android POWER key event (using input)</string>
+  <string id="80000">Options</string>
+  <string id="80001">When activating screensaver...</string>
+  <string id="80500">Log off user</string>
+  <string id="80600">Mute audio</string>
 
 </strings>

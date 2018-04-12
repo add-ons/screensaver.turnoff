@@ -1,22 +1,36 @@
-= Kodi screensaver to turn off display
+= Kodi screensaver that turns your screen off to save power
 
-No Signal is a Kodi screensaver that puts your display off when in screen saver mode.
+This Kodi screensaver turns your TV, projector or monitor off, so it can actually "save your screen".
+
 
 == How does it work ?
 
 It supports the following methods:
 
-Raspberry Pi (vcgencmd)::
-The screensaver causes 'no signal' using the vcgencmd utility. This only works on Raspberry Pi.
-
 CEC Standby (internal)::
 The screensaver forces the display to go into Standby using internal CEC controls.
+
+Raspberry Pi (vcgencmd)::
+The screensaver causes 'no signal' using the vcgencmd utility. This only works on Raspberry Pi.
 
 DPMS (internal)::
 The screensaver immediately forces the display off using internal DPMS (Energy Star) controls.
 
-X11 DPMS (xset)::
-The screensaver immediately forces the display off using the `xset` utility to set DPMS off state..
+DPMS (xset)::
+The screensaver immediately forces the display off using the `xset` utility to set DPMS off state.
+
+DPMS (vbetool)::
+The screensaver immediately forces the display off using the `vbetool` utility to set DPMS off state.
+
+DPMS (xrandr)::
+The screensaver immediately forces the display off using the `xrandr` utility to set DPMS off state.
+
+Android CEC (kernel)::
+The screensaver immediately forces the display off using kernel CEC controls and turns off device.
 
 
-Optionally this screensaver can also log off your user.
+Optionally it also can put your system to sleep or power it off.
+
+Or log off your user or mute audio.
+
+One can press the `HOME` key to deactivate the screensaver, depending on the method used and the state of the display it may turn your display back on.
