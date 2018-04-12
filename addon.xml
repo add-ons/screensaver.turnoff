@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="screensaver.nosignal" name="No Signal" version="0.7.4" provider-name="Dag Wieers">
+  <extension point="xbmc.addon.metadata">
+    <platform>linux</platform>
+    <summary lang="en">Screensaver that turns your screen off to save power</summary>
+    <description lang="en">This is a real screen saver, as it turns the display signal off which makes your TV, beamer or monitor to eventually turn off too.</description>
+    <source>http://github.com/dagwieers/plugin.screensaver.nosignal</source>
+    <license>GPL3+</license>
+    <email>dag@wieers.com</email>
+  </extension>
+  <extension point="xbmc.ui.screensaver" library="nosignal.py"/>
+  <requires><import addon="xbmc.python" version="2.25.0"/></requires>
+</addon>

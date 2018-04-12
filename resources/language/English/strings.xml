@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+
+  <!-- For the add on itself -->
+
+  <!-- For the settings -->
+  <string id="30000">Log off user when activating screensaver</string>
+  <string id="30010">Display method</string>
+  <string id="30011">Do nothing</string>
+  <string id="30012">Raspberry Pi (vcgencmd)</string>
+  <string id="30013">X11 DPMS (xset)</string>
+
+</strings>

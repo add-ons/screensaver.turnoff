@@ -1,0 +1,14 @@
+= Kodi screensaver to turn off display
+
+No Signal is a Kodi screensaver that puts your display off when in screen saver mode.
+
+== How does it work ?
+The screensaver causes 'no signal' to the display (beamer, monitor, TV) which eventually goes into sleep or turn off.
+
+It supports the following methods:
+
+- Raspberry Pi (vcgencmd)
+- X11 DPMS (xset)
+
+Optionally this screensaver can also log off your user.
+
