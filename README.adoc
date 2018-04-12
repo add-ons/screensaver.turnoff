@@ -9,6 +9,7 @@ It supports the following methods:
 
 - Raspberry Pi (vcgencmd)
 - X11 DPMS (xset)
+- DPMS (internal)
+- CEC Standby (internal)
 
 Optionally this screensaver can also log off your user.
-

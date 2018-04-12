@@ -8,6 +8,8 @@
   <string id="30011">Do nothing</string>
   <string id="30012">Raspberry Pi (vcgencmd)</string>
   <string id="30013">X11 DPMS (xset)</string>
+  <string id="30014">DPMS (internal)</string>
+  <string id="30015">CEC Standby (internal)</string>
   <string id="30100">Log off user when (activating screensaver)</string>
 
 </strings>

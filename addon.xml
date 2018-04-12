@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="screensaver.nosignal" name="No Signal" version="0.7.4" provider-name="Dag Wieers">
+<addon id="screensaver.nosignal" name="No Signal" version="0.8.0" provider-name="Dag Wieers">
   <extension point="xbmc.addon.metadata">
     <platform>linux</platform>
     <summary lang="en">Screensaver that turns your screen off to save power</summary>

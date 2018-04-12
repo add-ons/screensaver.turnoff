@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings>
-    <setting label="30010" type="enum" id="method" lvalues="30011|30012|30013" default="1"/>
+    <setting label="30010" type="enum" id="method" lvalues="30011|30012|30013|30014|30015" default="1"/>
     <setting label="30100" type="bool" id="logoff" default="true"/>
 </settings>
