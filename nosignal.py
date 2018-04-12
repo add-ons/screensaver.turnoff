@@ -30,17 +30,17 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         if method == '1':
             subprocess.call(['vcgencmd', 'display_power', '0'])
         elif method == '2':
-            subprocess.call(['xset', 'dpms', 'force', 'off'])
+            try:
+                xbmc.executebuiltin('CECStandby')
+            except Exception as e:
+                xbmc.log(msg="%s Failed to turn device off via CEC: %s" % (addon_name, e), level=xbmc.LOGERROR)
         elif method == '3':
             try:
                 xbmc.executebuiltin('ToggleDPMS')
             except Exception as e:
                 xbmc.log(msg="%s Failed to toggle DPMS: %s" % (addon_name, e), level=xbmc.LOGERROR)
         elif method == '4':
-            try:
-                xbmc.executebuiltin('CECStandby')
-            except Exception as e:
-                xbmc.log(msg="%s Failed to turn device off via CEC: %s" % (addon_name, e), level=xbmc.LOGERROR)
+            subprocess.call(['xset', 'dpms', 'force', 'off'])
 
 
     def onAction(self):
@@ -52,17 +52,17 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         if method == '1':
             subprocess.call(['vcgencmd', 'display_power', '1'])
         elif method == '2':
-            subprocess.call(['xset', 'dpms', 'force', 'on'])
+            try:
+                xbmc.executebuiltin('CECActivateSource')
+            except Exception as e:
+                xbmc.log(msg="%s Failed to turn device off via CEC: %s" % (addon_name, e), level=xbmc.LOGERROR)
         elif method == '3':
             try:
                 xbmc.executebuiltin('ToggleDPMS')
             except Exception as e:
                 xbmc.log(msg="%s Failed to toggle DPMS: %s" % (addon_name, e), level=xbmc.LOGERROR)
         elif method == '4':
-            try:
-                xbmc.executebuiltin('CECActivateSource')
-            except Exception as e:
-                xbmc.log(msg="%s Failed to turn device off via CEC: %s" % (addon_name, e), level=xbmc.LOGERROR)
+            subprocess.call(['xset', 'dpms', 'force', 'on'])
 
         self.close()
 

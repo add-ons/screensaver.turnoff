@@ -3,13 +3,20 @@
 No Signal is a Kodi screensaver that puts your display off when in screen saver mode.
 
 == How does it work ?
-The screensaver causes 'no signal' to the display (beamer, monitor, TV) which eventually goes into sleep or turn off.
 
 It supports the following methods:
 
-- Raspberry Pi (vcgencmd)
-- X11 DPMS (xset)
-- DPMS (internal)
-- CEC Standby (internal)
+Raspberry Pi (vcgencmd)::
+The screensaver causes 'no signal' using the vcgencmd utility. This only works on Raspberry Pi.
+
+CEC Standby (internal)::
+The screensaver forces the display to go into Standby using internal CEC controls.
+
+DPMS (internal)::
+The screensaver immediately forces the display off using internal DPMS (Energy Star) controls.
+
+X11 DPMS (xset)::
+The screensaver immediately forces the display off using the `xset` utility to set DPMS off state..
+
 
 Optionally this screensaver can also log off your user.
