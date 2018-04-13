@@ -69,7 +69,8 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         self._monitor = self.Monitor(self.exit)
 
         # Power off system
-        _log_notice(msg='Turn system off using method %s' % power_method)
+        if power_method != 0:
+            _log_notice(msg='Turn system off using method %s' % power_method)
         if power_method == '1':  # Suspend (built-in)
             _run_builtin('Suspend')
         elif power_method == '2':  # Hibernate (built-in)
@@ -94,7 +95,8 @@ class Screensaver(xbmcgui.WindowXMLDialog):
             _run_builtin('Mute')
 
         # Turn on display
-        _log_notice(msg='Turn display signal back on using method %s' % display_method)
+        if display_method != 0:
+            _log_notice(msg='Turn display signal back on using method %s' % display_method)
         if display_method == '1':  # CEC (built-in)
             _run_builtin('CECActivateSource')
         elif display_method == '2':  # No Signal on Raspberry Pi (using vcgencmd)
@@ -127,7 +129,8 @@ if __name__ == '__main__':
     mute = addon.getSetting('mute')
 
     # Turn off display
-    _log_notice(msg='Turn display signal off using method %s' % display_method)
+    if display_method != 0:
+        _log_notice(msg='Turn display signal off using method %s' % display_method)
     if display_method == '1':  # CEC (built-in)
         _run_builtin('CECStandby')
     elif display_method == '2':  # No Signal on Raspberry Pi (using vcgencmd)
