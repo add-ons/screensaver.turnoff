@@ -62,6 +62,9 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         def onScreensaverDeactivated(self):
             self._callback()
 
+    def __init__(self, *args, **kwargs):
+        pass
+
     def onInit(self):
         self._monitor = self.Monitor(self.exit)
 
