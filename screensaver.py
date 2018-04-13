@@ -69,9 +69,9 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         _log_notice(msg='Turn system off using method %s' % power_method)
         if power_method == '1':  # Suspend (built-in)
             _run_builtin('Suspend')
-        elif power_method == '2':  # ShutDown action (built-in)
+        elif power_method == '2':  # Hibernate (built-in)
             _run_builtin('Hibernate')
-        elif power_method == '3':  # ShutDown action (built-in)
+        elif power_method == '3':  # Quit (built-in)
             _run_builtin('Quit')
         elif power_method == '4':  # ShutDown action (built-in)
             _run_builtin('ShutDown')
@@ -92,20 +92,20 @@ class Screensaver(xbmcgui.WindowXMLDialog):
 
         # Turn on display
         _log_notice(msg='Turn display signal back on using method %s' % display_method)
-        if display_method == '1':  # CEC Standby (built-in)
+        if display_method == '1':  # CEC (built-in)
             _run_builtin('CECActivateSource')
-        elif display_method == '2':  # Raspberry Pi (using vcgencmd)
+        elif display_method == '2':  # No Signal on Raspberry Pi (using vcgencmd)
             _run_command(['vcgencmd', 'display_power', '1'])
         elif display_method == '3':  # DPMS (built-in)
             _run_builtin('ToggleDPMS')
-        elif display_method == '4':  # X11 DPMS (using xset)
+        elif display_method == '4':  # DPMS (using xset)
             _run_command(['xset', 'dpms', 'force', 'on'])
         elif display_method == '5':  # DPMS (using vbetool)
             _run_command(['vbetool', 'dpms', 'on'])
         elif display_method == '6':  # DPMS (using xrandr)
             # NOTE: This needs more outside testing
             _run_command(['xrandr', '--output CRT-0', 'on'])
-        elif display_method == '7':  # Android CEC (kernel)
+        elif display_method == '7':  # CEC on Android (kernel)
             # NOTE: This needs more outside testing
             _run_command(['su', '-c', 'echo 1 >/sys/devices/virtual/graphics/fb0/cec'], shell=True)
 
@@ -125,20 +125,20 @@ if __name__ == '__main__':
 
     # Turn off display
     _log_notice(msg='Turn display signal off using method %s' % display_method)
-    if display_method == '1':  # CEC Standby (built-in)
+    if display_method == '1':  # CEC (built-in)
         _run_builtin('CECStandby')
-    elif display_method == '2':  # Raspberry Pi (using vcgencmd)
+    elif display_method == '2':  # No Signal on Raspberry Pi (using vcgencmd)
         _run_command(['vcgencmd', 'display_power', '0'])
     elif display_method == '3':  # DPMS (built-in)
         _run_builtin('ToggleDPMS')
-    elif display_method == '4':  # X11 DPMS (using xset)
+    elif display_method == '4':  # DPMS (using xset)
         _run_command(['xset', 'dpms', 'force', 'off'])
     elif display_method == '5':  # DPMS (using vbetool)
         _run_command(['vbetool', 'dpms', 'off'])
     elif display_method == '6':  # DPMS (using xrandr)
         # NOTE: This needs more outside testing
         _run_command(['xrandr', '--output CRT-0', 'off'])
-    elif display_method == '7':  # Android CEC (kernel)
+    elif display_method == '7':  # CEC on Android (kernel)
         # NOTE: This needs more outside testing
         _run_command(['su', '-c', 'echo 0 >/sys/devices/virtual/graphics/fb0/cec'], shell=True)
 

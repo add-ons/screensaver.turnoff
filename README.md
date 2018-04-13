@@ -7,26 +7,26 @@ This Kodi screensaver turns your TV, projector or monitor off, so it can actuall
 
 It supports the following methods:
 
-CEC Standby (internal)::
-The screensaver forces the display to go into Standby using internal CEC controls.
+- **CEC (built-in)**
+  - The screensaver forces the display to go into Standby using internal CEC controls.
 
-Raspberry Pi (vcgencmd)::
-The screensaver causes 'no signal' using the vcgencmd utility. This only works on Raspberry Pi.
+- **No Signal on Raspberry Pi (using vcgencmd)**
+  - The screensaver causes 'no signal' using the vcgencmd utility. This only works on Raspberry Pi.
 
-DPMS (internal)::
-The screensaver immediately forces the display off using internal DPMS (Energy Star) controls.
+- **DPMS (built-in)**
+  - The screensaver immediately forces the display off using internal DPMS (Energy Star) controls.
 
-DPMS (xset)::
-The screensaver immediately forces the display off using the `xset` utility to set DPMS off state.
+- **DPMS (using xset)**
+  - The screensaver immediately forces the display off using the `xset` utility to set DPMS off state.
 
-DPMS (vbetool)::
-The screensaver immediately forces the display off using the `vbetool` utility to set DPMS off state.
+- **DPMS (using vbetool)**
+  - The screensaver immediately forces the display off using the `vbetool` utility to set DPMS off state.
 
-DPMS (xrandr)::
-The screensaver immediately forces the display off using the `xrandr` utility to set DPMS off state.
+- **DPMS (using xrandr)**
+  - The screensaver immediately forces the display off using the `xrandr` utility to set DPMS off state.
 
-Android CEC (kernel)::
-The screensaver immediately forces the display off using kernel CEC controls and turns off device.
+- **CEC on Android (kernel)**
+  - The screensaver immediately forces the display off using kernel CEC controls and turns off device.
 
 
 Optionally it also can put your system to sleep or power it off.

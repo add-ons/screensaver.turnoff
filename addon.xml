@@ -5,7 +5,7 @@
     <summary lang="en">Screensaver that turns your screen off to save power</summary>
     <description lang="en">The Turn Off screensaver turns your TV, projector or monitor off, like any old fashioned screensaver is intended to do.</description>
     <source>http://github.com/dagwieers/plugin.screensaver.off</source>
-    <license>GPL3+</license>
+    <license>GPL2+</license>
     <email>dag@wieers.com</email>
   </extension>
   <extension point="xbmc.ui.screensaver" library="screensaver.py"/>
