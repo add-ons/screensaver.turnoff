@@ -6,16 +6,30 @@ import xbmcaddon
 import xbmcgui
 
 
-def _popup(title='', msg='', delay=5000, image= ''):
+def _log_error(msg='', level=xbmc.LOGERROR):
+    xbmc.log(msg='[%s] %s' % (addon_name, msg), level=level)
+
+
+def _log_notice(msg='', level=xbmc.LOGNOTICE):
+    xbmc.log(msg='[%s] %s' % (addon_name, msg), level=level)
+
+
+def _popup(title='', msg='', delay=10000, image=''):
+    if not title:
+        title = '%s screensaver failed' % addon_name
+    if not image:
+        image = addon_icon
     xbmc.executebuiltin('XBMC.Notification("%s","%s",%d,"%s")' % (title, msg, delay, image))
 
+
 def _run_builtin(builtin):
-    xbmc.log(msg="[%s] Executing builtin '%s'" % (addon_name, builtin), level=xbmc.LOGNOTICE)
+    _log_notice(msg="Executing builtin '%s'" % builtin)
     try:
         xbmc.executebuiltin(builtin)
     except Exception as e:
-        xbmc.log(msg="[%s] Exception executing builtin '%s': %s" % (addon_name, builtin, e), level=xbmc.LOGERROR)
-        _popup(title='Screensaver failed', msg="[%s] Exception executing builtin '%s': %s" % (addon_name, builtin, e))
+        _log_error(msg="Exception executing builtin '%s': %s" % (builtin, e))
+        _popup(msg="Exception executing builtin '%s': %s" % (builtin, e))
+
 
 def _run_command(command, shell=False):
     # TODO: Add options for running using su or sudo
@@ -23,20 +37,19 @@ def _run_command(command, shell=False):
         cmd = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=shell)
         (out, err) = cmd.communicate()
         if cmd.returncode == 0:
-            xbmc.log(msg="[%s] Running command '%s' returned rc=%s" % (addon_name, ' '.join(command), cmd.returncode), level=xbmc.LOGNOTICE)
+            _log_notice(msg="Running command '%s' returned rc=%s" % (' '.join(command), cmd.returncode))
         else:
-            xbmc.log(msg="[%s] Running command '%s' failed with rc=%s" % (addon_name, ' '.join(command), cmd.returncode), level=xbmc.LOGERROR)
+            _log_error(msg="Running command '%s' failed with rc=%s" % (' '.join(command), cmd.returncode))
             if err:
-                xbmc.log(msg="[%s] Command '%s' returned on stderr: %s" % (addon_name, command[0], err), level=xbmc.LOGERROR)
+                _log_error(msg="Command '%s' returned on stderr: %s" % (command[0], err))
             if out:
-                xbmc.log(msg="[%s] Command '%s' returned on stdout: %s " % (addon_name, command[0], out), level=xbmc.LOGERROR)
-            _popup(title='Screensaver failed', msg="%s\n%s" % (out, err))
+                _log_error(msg="Command '%s' returned on stdout: %s " % (command[0], out))
+            _popup(msg="%s\n%s" % (out, err))
             sys.exit(1)
     except Exception as e:
-        xbmc.log(msg="[%s] Exception running '%s': %s" % (addon_name, command[0], e), level=xbmc.LOGERROR)
-        _popup(title='Screensaver failed', msg="Exception running '%s': %s" % (command[0], e))
+        _log_error(msg="Exception running '%s': %s" % (command[0], e))
+        _popup(msg="Exception running '%s': %s" % (command[0], e))
         sys.exit(2)
-    # TODO: Show pop-up on failure
 
 
 class Screensaver(xbmcgui.WindowXMLDialog):
@@ -53,7 +66,7 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         self._monitor = self.Monitor(self.exit)
 
         # Power off system
-        xbmc.log(msg='[%s] Turn system off using method %s' % (addon_name, power_method), level=xbmc.LOGNOTICE)
+        _log_notice(msg='Turn system off using method %s' % power_method)
         if power_method == '1':  # Suspend (built-in)
             _run_builtin('Suspend')
         elif power_method == '2':  # ShutDown action (built-in)
@@ -78,7 +91,7 @@ class Screensaver(xbmcgui.WindowXMLDialog):
             _run_builtin('Mute')
 
         # Turn on display
-        xbmc.log(msg='[%s] Turn display signal back on using method %s' % (addon_name, display_method), level=xbmc.LOGNOTICE)
+        _log_notice(msg='Turn display signal back on using method %s' % display_method)
         if display_method == '1':  # CEC Standby (built-in)
             _run_builtin('CECActivateSource')
         elif display_method == '2':  # Raspberry Pi (using vcgencmd)
@@ -104,13 +117,14 @@ if __name__ == '__main__':
 
     addon_name = addon.getAddonInfo('name')
     addon_path = addon.getAddonInfo('path')
+    addon_icon = addon.getAddonInfo('icon')
     display_method = addon.getSetting('display_method')
     power_method = addon.getSetting('power_method')
     logoff = addon.getSetting('logoff')
     mute = addon.getSetting('mute')
 
     # Turn off display
-    xbmc.log(msg='[%s] Turn display signal off using method %s' % (addon_name, display_method), level=xbmc.LOGNOTICE)
+    _log_notice(msg='Turn display signal off using method %s' % display_method)
     if display_method == '1':  # CEC Standby (built-in)
         _run_builtin('CECStandby')
     elif display_method == '2':  # Raspberry Pi (using vcgencmd)

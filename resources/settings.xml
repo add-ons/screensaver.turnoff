@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings>
   <category id="display" label="30000">
-    <setting id="display_method" type="enum" label="31001" lvalues="31100|31110|31120|31130|31140|31150|31160|31170" default="1"/>
-    <setting id="display_label" type="text" label="31002" enable="false" />
+    <setting type="lsep" label="30001"/>
+    <setting id="display_method" type="select" label="31000" help="31001" lvalues="31100|31110|31120|31130|31140|31150|31160|31170" default="1"/>
+    <setting id="display_label" type="text" label="31001" enable="false" />
+    <setting id="cec_label" type="text" label="31002" enable="false" />
+    <setting id="rpi_label" type="text" label="31003" enable="false" />
+    <setting id="dpms_label" type="text" label="31004" enable="false" />
+    <setting id="deactivate_label" type="text" label="31005" enable="false" />
+    <setting id="deactivate_note" type="text" label="31006" enable="false" />
   </category>
   <category id="power" label="40000">
-    <setting id="power_method" type="enum" label="41001" lvalues="41100|41110|41120|41130|41140|41150|41160|41170" default="0"/>
-    <setting id="power_label" type="text" label="41002" enable="false" />
+    <setting type="lsep" label="40001"/>
+    <setting id="power_method" type="select" label="41000" help="41001" lvalues="41100|41110|41120|41130|41140|41150|41160|41170" default="0"/>
+    <setting id="power_label" type="text" label="41001" enable="false" />
   </category>
   <category id="options" label="80000">
     <setting type="lsep" label="80001"/>
-    <setting id="logoff" type="bool" label="80500" default="false"/>
-    <setting id="mute" type="bool" label="80600" default="false"/>
+    <setting id="logoff" type="bool" label="80500" help="80501" default="false"/>
+    <setting id="logoff_label" type="text" label="80501" enable="false" />
+    <setting id="mute" type="bool" label="80600" help="80601" default="true"/>
+    <setting id="mute_label" type="text" label="80601" enable="false" />
   </category>
 </settings>
