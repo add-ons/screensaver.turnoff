@@ -159,6 +159,6 @@ if __name__ == '__main__':
         _run_builtin('Mute')
 
     # Do not start screensaver when command fails
-    screensaver = Screensaver('screensaver-nosignal.xml', addon_path, 'default')
+    screensaver = Screensaver('screensaver-turnoff.xml', addon_path, 'default')
     screensaver.doModal()
     del screensaver
