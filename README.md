@@ -1,9 +1,9 @@
-= Kodi screensaver that turns your screen off to save power
+# Kodi screensaver that turns your screen off to save power
 
 This Kodi screensaver turns your TV, projector or monitor off, so it can actually "save your screen".
 
 
-== How does it work ?
+## How does it work ?
 
 It supports the following methods:
 

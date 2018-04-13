@@ -1,0 +1,154 @@
+# XBMC Media Center language file
+msgid ""
+msgstr ""
+"Project-Id-Version: XBMC-Addons\n"
+"Report-Msgid-Bugs-To: dag@wieers.com\n"
+"POT-Creation-Date: 2018-04-13 03:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Dag Wieers <dag@wieers.com>\n"
+"Language-Team: en-US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgctxt "#30000"
+msgid "Display"
+msgstr ""
+
+msgctxt "#30001"
+msgid "Pick a method for turning off your display"
+msgstr ""
+
+msgctxt "#31000"
+msgid "Display method"
+msgstr ""
+
+msgctxt "#31001"
+msgid "Not all 'Display methods' work on every system. Carefully test."
+msgstr ""
+
+msgctxt "#31002"
+msgid "- CEC methods require CEC device support. Check vendor manual."
+msgstr ""
+
+msgctxt "#31003"
+msgid "- No Signal method disables video signal. Device may go to sleep or turn off."
+msgstr ""
+
+msgctxt "#31004"
+msgid "- DPMS methods make use of VESA DPMS capabilities of your monitor."
+msgstr ""
+
+msgctxt "#31005"
+msgid "Press HOME or BACK key on remote to return from screen saver."
+msgstr ""
+
+msgctxt "#31006"
+msgid "NOTE: Not every device can be powered on automatically."
+msgstr ""
+
+msgctxt "#31100"
+msgid "Do nothing"
+msgstr ""
+
+msgctxt "#31110"
+msgid "CEC (built-in)"
+msgstr ""
+
+msgctxt "#31120"
+msgid "No Signal on Raspberry Pi (using vcgencmd)"
+msgstr ""
+
+msgctxt "#31130"
+msgid "DPMS (built-in)"
+msgstr ""
+
+msgctxt "#31140"
+msgid "DPMS (using xset)"
+msgstr ""
+
+msgctxt "#31150"
+msgid "DPMS (using vbetool)"
+msgstr ""
+
+msgctxt "#31160"
+msgid "DPMS (using xrandr)"
+msgstr ""
+
+msgctxt "#31170"
+msgid "CEC on Android (kernel)"
+msgstr ""
+
+msgctxt "#40000"
+msgid "Power"
+msgstr ""
+
+msgctxt "#40001"
+msgid "Pick a method for turning off your system"
+msgstr ""
+
+msgctxt "#41000"
+msgid "Power method"
+msgstr ""
+
+msgctxt "#41001"
+msgid "Don't change this unless you know exactly what you are doing."
+msgstr ""
+
+msgctxt "#41100"
+msgid "Do nothing"
+msgstr ""
+
+msgctxt "#41110"
+msgid "Suspend (built-in)"
+msgstr ""
+
+msgctxt "#41120"
+msgid "Hibernate (built-in)"
+msgstr ""
+
+msgctxt "#41130"
+msgid "Quit (built-in)"
+msgstr ""
+
+msgctxt "#41140"
+msgid "Shutdown action (built-in)"
+msgstr ""
+
+msgctxt "#41150"
+msgid "Reboot (built-in)"
+msgstr ""
+
+msgctxt "#41260"
+msgid "Powerdown (built-in)"
+msgstr ""
+
+msgctxt "#41170"
+msgid "Android POWER key event (using input)"
+msgstr ""
+
+msgctxt "#80000"
+msgid "Options"
+msgstr ""
+
+msgctxt "#80001"
+msgid "When activating screensaver..."
+msgstr ""
+
+msgctxt "#80500"
+msgid "Log off user"
+msgstr ""
+
+msgctxt "#80501"
+msgid "Useful in case you have parental controls enabled."
+msgstr ""
+
+msgctxt "#80600"
+msgid "Mute audio"
+msgstr ""
+
+msgctxt "#80601"
+msgid "Ensure no audio is produced inadvertently, e.g. when using A/V receiver."
+msgstr ""
