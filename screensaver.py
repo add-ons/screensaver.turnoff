@@ -6,49 +6,49 @@ import xbmcaddon
 import xbmcgui
 
 
-def _log_error(msg='', level=xbmc.LOGERROR):
+def log_error(msg='', level=xbmc.LOGERROR):
     xbmc.log(msg='[%s] %s' % (addon_name, msg), level=level)
 
 
-def _log_notice(msg='', level=xbmc.LOGNOTICE):
+def log_notice(msg='', level=xbmc.LOGNOTICE):
     xbmc.log(msg='[%s] %s' % (addon_name, msg), level=level)
 
 
-def _popup(title='', msg='', delay=10000, image=''):
-    if not title:
-        title = '%s screensaver failed' % addon_name
-    if not image:
-        image = addon_icon
-    xbmc.executebuiltin('XBMC.Notification("%s","%s",%d,"%s")' % (title, msg, delay, image))
+def popup(heading='', msg='', delay=10000, icon=''):
+    if not heading:
+        heading = '%s screensaver failed' % addon_name
+    if not icon:
+        icon = addon_icon
+    xbmcgui.Dialog().notification(heading, msg, icon, delay)
 
 
-def _run_builtin(builtin):
-    _log_notice(msg="Executing builtin '%s'" % builtin)
+def run_builtin(builtin):
+    log_notice(msg="Executing builtin '%s'" % builtin)
     try:
         xbmc.executebuiltin(builtin)
     except Exception as e:
-        _log_error(msg="Exception executing builtin '%s': %s" % (builtin, e))
-        _popup(msg="Exception executing builtin '%s': %s" % (builtin, e))
+        log_error(msg="Exception executing builtin '%s': %s" % (builtin, e))
+        popup(msg="Exception executing builtin '%s': %s" % (builtin, e))
 
 
-def _run_command(command, shell=False):
+def run_command(command, shell=False):
     # TODO: Add options for running using su or sudo
     try:
         cmd = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=shell)
         (out, err) = cmd.communicate()
         if cmd.returncode == 0:
-            _log_notice(msg="Running command '%s' returned rc=%s" % (' '.join(command), cmd.returncode))
+            log_notice(msg="Running command '%s' returned rc=%s" % (' '.join(command), cmd.returncode))
         else:
-            _log_error(msg="Running command '%s' failed with rc=%s" % (' '.join(command), cmd.returncode))
+            log_error(msg="Running command '%s' failed with rc=%s" % (' '.join(command), cmd.returncode))
             if err:
-                _log_error(msg="Command '%s' returned on stderr: %s" % (command[0], err))
+                log_error(msg="Command '%s' returned on stderr: %s" % (command[0], err))
             if out:
-                _log_error(msg="Command '%s' returned on stdout: %s " % (command[0], out))
-            _popup(msg="%s\n%s" % (out, err))
+                log_error(msg="Command '%s' returned on stdout: %s " % (command[0], out))
+            popup(msg="%s\n%s" % (out, err))
             sys.exit(1)
     except Exception as e:
-        _log_error(msg="Exception running '%s': %s" % (command[0], e))
-        _popup(msg="Exception running '%s': %s" % (command[0], e))
+        log_error(msg="Exception running '%s': %s" % (command[0], e))
+        popup(msg="Exception running '%s': %s" % (command[0], e))
         sys.exit(2)
 
 
@@ -70,21 +70,21 @@ class Screensaver(xbmcgui.WindowXMLDialog):
 
         # Power off system
         if power_method != 0:
-            _log_notice(msg='Turn system off using method %s' % power_method)
+            log_notice(msg='Turn system off using method %s' % power_method)
         if power_method == '1':  # Suspend (built-in)
-            _run_builtin('Suspend')
+            run_builtin('Suspend')
         elif power_method == '2':  # Hibernate (built-in)
-            _run_builtin('Hibernate')
+            run_builtin('Hibernate')
         elif power_method == '3':  # Quit (built-in)
-            _run_builtin('Quit')
+            run_builtin('Quit')
         elif power_method == '4':  # ShutDown action (built-in)
-            _run_builtin('ShutDown')
+            run_builtin('ShutDown')
         elif power_method == '5':  # Reboot (built-in)
-            _run_builtin('Reboot')
+            run_builtin('Reboot')
         elif power_method == '6':  # PowerDown (built-in)
-            _run_builtin('PowerDown')
+            run_builtin('PowerDown')
         elif power_method == '7':  # Android POWER key event (using input)
-            _run_command(['su', '-c', 'input keyevent KEYCODE_POWER'], shell=True)
+            run_command(['su', '-c', 'input keyevent KEYCODE_POWER'], shell=True)
 
     def onAction(self, action):
         self.exit()
@@ -92,27 +92,27 @@ class Screensaver(xbmcgui.WindowXMLDialog):
     def exit(self):
         # Unmute audio
         if mute == 'true':
-            _run_builtin('Mute')
+            run_builtin('Mute')
 
         # Turn on display
         if display_method != 0:
-            _log_notice(msg='Turn display signal back on using method %s' % display_method)
+            log_notice(msg='Turn display signal back on using method %s' % display_method)
         if display_method == '1':  # CEC (built-in)
-            _run_builtin('CECActivateSource')
+            run_builtin('CECActivateSource')
         elif display_method == '2':  # No Signal on Raspberry Pi (using vcgencmd)
-            _run_command(['vcgencmd', 'display_power', '1'])
+            run_command(['vcgencmd', 'display_power', '1'])
         elif display_method == '3':  # DPMS (built-in)
-            _run_builtin('ToggleDPMS')
+            run_builtin('ToggleDPMS')
         elif display_method == '4':  # DPMS (using xset)
-            _run_command(['xset', 'dpms', 'force', 'on'])
+            run_command(['xset', 'dpms', 'force', 'on'])
         elif display_method == '5':  # DPMS (using vbetool)
-            _run_command(['vbetool', 'dpms', 'on'])
+            run_command(['vbetool', 'dpms', 'on'])
         elif display_method == '6':  # DPMS (using xrandr)
             # NOTE: This needs more outside testing
-            _run_command(['xrandr', '--output CRT-0', 'on'])
+            run_command(['xrandr', '--output CRT-0', 'on'])
         elif display_method == '7':  # CEC on Android (kernel)
             # NOTE: This needs more outside testing
-            _run_command(['su', '-c', 'echo 1 >/sys/devices/virtual/graphics/fb0/cec'], shell=True)
+            run_command(['su', '-c', 'echo 1 >/sys/devices/virtual/graphics/fb0/cec'], shell=True)
 
         del self._monitor
         self.close()
@@ -130,33 +130,33 @@ if __name__ == '__main__':
 
     # Turn off display
     if display_method != 0:
-        _log_notice(msg='Turn display signal off using method %s' % display_method)
+        log_notice(msg='Turn display signal off using method %s' % display_method)
     if display_method == '1':  # CEC (built-in)
-        _run_builtin('CECStandby')
+        run_builtin('CECStandby')
     elif display_method == '2':  # No Signal on Raspberry Pi (using vcgencmd)
-        _run_command(['vcgencmd', 'display_power', '0'])
+        run_command(['vcgencmd', 'display_power', '0'])
     elif display_method == '3':  # DPMS (built-in)
-        _run_builtin('ToggleDPMS')
+        run_builtin('ToggleDPMS')
     elif display_method == '4':  # DPMS (using xset)
-        _run_command(['xset', 'dpms', 'force', 'off'])
+        run_command(['xset', 'dpms', 'force', 'off'])
     elif display_method == '5':  # DPMS (using vbetool)
-        _run_command(['vbetool', 'dpms', 'off'])
+        run_command(['vbetool', 'dpms', 'off'])
     elif display_method == '6':  # DPMS (using xrandr)
         # NOTE: This needs more outside testing
-        _run_command(['xrandr', '--output CRT-0', 'off'])
+        run_command(['xrandr', '--output CRT-0', 'off'])
     elif display_method == '7':  # CEC on Android (kernel)
         # NOTE: This needs more outside testing
-        _run_command(['su', '-c', 'echo 0 >/sys/devices/virtual/graphics/fb0/cec'], shell=True)
+        run_command(['su', '-c', 'echo 0 >/sys/devices/virtual/graphics/fb0/cec'], shell=True)
 
 
     # FIXME: Screensaver always seems to log off when logged in ?
     # Log off user
     if logoff == 'true':
-        _run_builtin('System.Logoff()')
+        run_builtin('System.Logoff()')
 
     # Mute audio
     if mute == 'true':
-        _run_builtin('Mute')
+        run_builtin('Mute')
 
     # Do not start screensaver when command fails
     screensaver = Screensaver('screensaver-turnoff.xml', addon_path, 'default')
