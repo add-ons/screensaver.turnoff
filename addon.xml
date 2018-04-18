@@ -4,9 +4,14 @@
     <platform>all</platform>
     <summary lang="en_GB">Screensaver that turns your screen off to save power</summary>
     <description lang="en_GB">The Turn Off screensaver turns your TV, projector or monitor off, like any old fashioned screensaver is intended to do.</description>
-    <source>http://github.com/dagwieers/plugin.screensaver.off</source>
     <license>GPL2+</license>
     <email>dag@wieers.com</email>
+    <website>https://kodi.wiki/view/Add-on:Turn_Off</website>
+    <source>http://github.com/dagwieers/screensaver.turnoff</source>
+    <forum>https://forum.kodi.tv/showthread.php?tid=331076</forum>
+    <assets>
+      <icon>icon.png</icon>
+    </assets>
   </extension>
   <extension point="xbmc.ui.screensaver" library="screensaver.py"/>
   <requires><import addon="xbmc.python" version="2.25.0"/></requires>
