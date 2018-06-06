@@ -34,3 +34,9 @@ Optionally it also can put your system to sleep or power it off.
 Or log off your user or mute audio.
 
 One can press the `HOME` key to deactivate the screensaver, depending on the method used and the state of the display it may turn your display back on.
+
+
+## Related
+A collection of related links:
+
+- [Hardware hack for turning RPi on over CEC](https://forum.kodi.tv/showthread.php?tid=174315&pid=2651811#pid2651811)

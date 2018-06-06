@@ -68,6 +68,37 @@ class Screensaver(xbmcgui.WindowXMLDialog):
     def onInit(self):
         self._monitor = self.Monitor(self.exit)
 
+        # Turn off display
+        if display_method != 0:
+            log_notice(msg='Turn display signal off using method %s' % display_method)
+
+        if display_method == '1':  # CEC (built-in)
+            run_builtin('CECStandby')
+        elif display_method == '2':  # No Signal on Raspberry Pi (using vcgencmd)
+            run_command(['vcgencmd', 'display_power', '0'])
+        elif display_method == '3':  # DPMS (built-in)
+            run_builtin('ToggleDPMS')
+        elif display_method == '4':  # DPMS (using xset)
+            run_command(['xset', 'dpms', 'force', 'off'])
+        elif display_method == '5':  # DPMS (using vbetool)
+            run_command(['vbetool', 'dpms', 'off'])
+        elif display_method == '6':  # DPMS (using xrandr)
+            # NOTE: This needs more outside testing
+            run_command(['xrandr', '--output CRT-0', 'off'])
+        elif display_method == '7':  # CEC on Android (kernel)
+            # NOTE: This needs more outside testing
+            run_command(['su', '-c', 'echo 0 >/sys/devices/virtual/graphics/fb0/cec'], shell=True)
+
+
+        # FIXME: Screensaver always seems to lock when started, requires unlock and re-login
+        # Log off user
+        if logoff == 'true':
+            run_builtin('System.Logoff()')
+
+        # Mute audio
+        if mute == 'true':
+            run_builtin('Mute')
+
         # Power off system
         if power_method != 0:
             log_notice(msg='Turn system off using method %s' % power_method)
@@ -127,36 +158,6 @@ if __name__ == '__main__':
     power_method = addon.getSetting('power_method')
     logoff = addon.getSetting('logoff')
     mute = addon.getSetting('mute')
-
-    # Turn off display
-    if display_method != 0:
-        log_notice(msg='Turn display signal off using method %s' % display_method)
-    if display_method == '1':  # CEC (built-in)
-        run_builtin('CECStandby')
-    elif display_method == '2':  # No Signal on Raspberry Pi (using vcgencmd)
-        run_command(['vcgencmd', 'display_power', '0'])
-    elif display_method == '3':  # DPMS (built-in)
-        run_builtin('ToggleDPMS')
-    elif display_method == '4':  # DPMS (using xset)
-        run_command(['xset', 'dpms', 'force', 'off'])
-    elif display_method == '5':  # DPMS (using vbetool)
-        run_command(['vbetool', 'dpms', 'off'])
-    elif display_method == '6':  # DPMS (using xrandr)
-        # NOTE: This needs more outside testing
-        run_command(['xrandr', '--output CRT-0', 'off'])
-    elif display_method == '7':  # CEC on Android (kernel)
-        # NOTE: This needs more outside testing
-        run_command(['su', '-c', 'echo 0 >/sys/devices/virtual/graphics/fb0/cec'], shell=True)
-
-
-    # FIXME: Screensaver always seems to log off when logged in ?
-    # Log off user
-    if logoff == 'true':
-        run_builtin('System.Logoff()')
-
-    # Mute audio
-    if mute == 'true':
-        run_builtin('Mute')
 
     # Do not start screensaver when command fails
     screensaver = Screensaver('screensaver-turnoff.xml', addon_path, 'default')
