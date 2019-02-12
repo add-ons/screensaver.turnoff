@@ -4,7 +4,7 @@ import subprocess
 import xbmc
 import xbmcaddon
 import xbmcgui
-
+import time
 
 def log_error(msg='', level=xbmc.LOGERROR):
     xbmc.log(msg='[%s] %s' % (addon_name, msg), level=level)
@@ -129,6 +129,10 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         if display_method != 0:
             log_notice(msg='Turn display signal back on using method %s' % display_method)
         if display_method == '1':  # CEC (built-in)
+            cec_timeout_number = int(cec_timeout) 
+            if cec_timeout_message== 'true' and cec_timeout_number > 0: popup(msg="Cec activation delayed by %s s" % (cec_timeout_number),heading="Delayed activation")
+            time.sleep(cec_timeout_number)
+            if cec_timeout_message== 'true' and cec_timeout_number > 0: popup(msg="Cec activated",heading="Delayed activation")
             run_builtin('CECActivateSource')
         elif display_method == '2':  # No Signal on Raspberry Pi (using vcgencmd)
             run_command(['vcgencmd', 'display_power', '1'])
@@ -155,6 +159,8 @@ if __name__ == '__main__':
     addon_path = addon.getAddonInfo('path')
     addon_icon = addon.getAddonInfo('icon')
     display_method = addon.getSetting('display_method')
+    cec_timeout = addon.getSetting('cec_timeout')
+    cec_timeout_message = addon.getSetting('cec_timeout_message')
     power_method = addon.getSetting('power_method')
     logoff = addon.getSetting('logoff')
     mute = addon.getSetting('mute')
