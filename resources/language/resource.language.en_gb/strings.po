@@ -81,6 +81,14 @@ msgctxt "#33117"
 msgid "CEC on Android (kernel)"
 msgstr "CEC on Android (kernel)"
 
+msgctxt "#33118"
+msgid "CEC timeout on wakeup (seconds)"
+msgstr "CEC timeout on wakeup (seconds)"
+
+msgctxt "#33119"
+msgid "CEC - Display notification on delayed wakeup"
+msgstr "CEC - Display notification on delayed wakeup"
+
 msgctxt "#33200"
 msgid "Power"
 msgstr "Power"
