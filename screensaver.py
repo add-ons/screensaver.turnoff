@@ -100,6 +100,9 @@ class Screensaver(xbmcgui.WindowXMLDialog):
 
         # Mute audio
         if mute == 'true':
+            # NOTE: Since the Mute-builtin is a toggle, we need to do this to ensure Mute
+            run_builtin('VolumeDown')
+            run_builtin('VolumeUp')
             run_builtin('Mute')
 
         # Power off system
@@ -126,7 +129,9 @@ class Screensaver(xbmcgui.WindowXMLDialog):
     def exit(self):
         # Unmute audio
         if mute == 'true':
-            run_builtin('Mute')
+            # NOTE: Since the Mute-builtin is a toggle, we need to do this to ensure Unmute
+            run_builtin('VolumeDown')
+            run_builtin('VolumeUp')
 
         # Turn on display
         if display_method != 0:
