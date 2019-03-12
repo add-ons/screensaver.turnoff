@@ -81,6 +81,10 @@ msgctxt "#33117"
 msgid "CEC on Android (kernel)"
 msgstr "CEC on Android (kernel)"
 
+msgctxt "#33118"
+msgid "Backlight on Raspberry Pi (kernel)"
+msgstr "Backlight on Raspberry Pi (kernel)"
+
 msgctxt "#33200"
 msgid "Power"
 msgstr "Power"

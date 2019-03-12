@@ -1,5 +1,5 @@
-import sys
 import subprocess
+import sys
 
 import xbmc
 import xbmcaddon
@@ -88,6 +88,9 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         elif display_method == '7':  # CEC on Android (kernel)
             # NOTE: This needs more outside testing
             run_command(['su', '-c', 'echo 0 >/sys/devices/virtual/graphics/fb0/cec'], shell=True)
+        elif display_method == '8':  # Backlight on Raspberry Pi (kernel)
+            # NOTE: Contrary to what you might think, 1 means off
+            run_command(['su', '-c', 'echo 1 >/sys/class/backlight/rpi_backlight/bl_power'], shell=True)
 
 
         # FIXME: Screensaver always seems to lock when started, requires unlock and re-login
@@ -144,6 +147,9 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         elif display_method == '7':  # CEC on Android (kernel)
             # NOTE: This needs more outside testing
             run_command(['su', '-c', 'echo 1 >/sys/devices/virtual/graphics/fb0/cec'], shell=True)
+        elif display_method == '8':  # Backlight on Raspberry Pi (kernel)
+            # NOTE: Contrary to what you might think, 0 means on
+            run_command(['su', '-c', 'echo 0 >/sys/class/backlight/rpi_backlight/bl_power'], shell=True)
 
         del self._monitor
         self.close()
