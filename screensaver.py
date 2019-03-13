@@ -62,21 +62,22 @@ def run_command(command, shell=False):
         sys.exit(2)
 
 
-class Screensaver(xbmcgui.WindowXMLDialog):
+class TurnOffMonitor(xbmc.Monitor):
 
-    class Monitor(xbmc.Monitor):
+    def __init__(self, *args, **kwargs):
+        self.action = kwargs['action']
 
-        def __init__(self, callback):
-            self._callback = callback
+    def onScreensaverDeactivated(self):
+        self.action()
 
-        def onScreensaverDeactivated(self):
-            self._callback()
+
+class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
 
     def __init__(self, *args, **kwargs):
         pass
 
     def onInit(self):
-        self._monitor = self.Monitor(self.exit)
+        self._monitor = TurnOffMonitor(self.exit)
 
         # Turn off display
         if display_method != 0:
@@ -185,6 +186,6 @@ if __name__ == '__main__':
     mute = addon.getSetting('mute')
 
     # Do not start screensaver when command fails
-    screensaver = Screensaver('screensaver-turnoff.xml', addon_path, 'default')
+    screensaver = TurnOffScreensaver('gui.xml', addon_path, 'default')
     screensaver.doModal()
     del screensaver
