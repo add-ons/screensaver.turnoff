@@ -1,3 +1,4 @@
+import atexit
 import subprocess
 import sys
 
@@ -134,10 +135,7 @@ class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
         elif power_method == '7':  # Android POWER key event (using input)
             run_command(['su', '-c', 'input keyevent KEYCODE_POWER'], shell=True)
 
-    def onAction(self, action):
-        self.exit()
-
-    def exit(self):
+    def resume(self):
         # Unmute audio
         if mute == 'true':
             log_notice(msg='Unmute audio')
@@ -169,6 +167,8 @@ class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
             # NOTE: Contrary to what you might think, 0 means on
             run_command(['su', '-c', 'echo 0 >/sys/class/backlight/rpi_backlight/bl_power'], shell=True)
 
+    @atexit.register
+    def __del__(self):
         del self._monitor
         self.close()
 
