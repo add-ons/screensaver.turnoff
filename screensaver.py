@@ -7,16 +7,16 @@ import xbmcgui
 
 
 def log_error(msg='', level=xbmc.LOGERROR):
-    xbmc.log(msg='[%s] %s' % (addon_name, msg), level=level)
+    xbmc.log(msg='[%s] %s' % (addon_id, msg), level=level)
 
 
 def log_notice(msg='', level=xbmc.LOGNOTICE):
-    xbmc.log(msg='[%s] %s' % (addon_name, msg), level=level)
+    xbmc.log(msg='[%s] %s' % (addon_id, msg), level=level)
 
 
 def popup(heading='', msg='', delay=10000, icon=''):
     if not heading:
-        heading = '%s screensaver failed' % addon_name
+        heading = 'Addon %s failed' % addon_id
     if not icon:
         icon = addon_icon
     xbmcgui.Dialog().notification(heading, msg, icon, delay)
@@ -163,7 +163,8 @@ if __name__ == '__main__':
     addon = xbmcaddon.Addon()
 
     addon_name = addon.getAddonInfo('name')
-    addon_path = addon.getAddonInfo('path')
+    addon_id = addon.getAddonInfo('id')
+    addon_path = addon.getAddonInfo('path').decode('utf-8')
     addon_icon = addon.getAddonInfo('icon')
     display_method = addon.getSetting('display_method')
     power_method = addon.getSetting('power_method')
