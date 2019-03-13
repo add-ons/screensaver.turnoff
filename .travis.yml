@@ -8,10 +8,9 @@ python:
 sudo: false
 
 install:
-- pip install wheel codecov coverage
-- pip install ./dist/tox_travis-*.whl
+- pip install tox-travis
 - pip install pylint
 
 script:
-- tox --installpkg ./dist/tox_travis-*.whl
-- pylint
+- tox
+- pylint screensaver.py
