@@ -3,6 +3,10 @@
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 
+'''
+This Kodi addon turns off display devices when Kodi goes into screensaver-mode.
+'''
+
 from __future__ import absolute_import, division, print_function, unicode_literals
 __metaclass__ = type
 
@@ -70,18 +74,22 @@ POWER_METHODS = [
 
 
 def log_error(msg='', level=xbmc.LOGERROR):
+    ''' Log error messages to Kodi '''
     xbmc.log(msg='[%s] %s' % (addon_id, msg), level=level)
 
 
 def log_info(msg='', level=xbmc.LOGINFO):
+    ''' Log info messages to Kodi '''
     xbmc.log(msg='[%s] %s' % (addon_id, msg), level=level)
 
 
 def log_notice(msg='', level=xbmc.LOGNOTICE):
+    ''' Log notices to Kodi '''
     xbmc.log(msg='[%s] %s' % (addon_id, msg), level=level)
 
 
 def popup(heading='', msg='', delay=10000, icon=''):
+    ''' Bring up a pop-up with a meaningful error '''
     if not heading:
         heading = 'Addon %s failed' % addon_id
     if not icon:
@@ -90,12 +98,14 @@ def popup(heading='', msg='', delay=10000, icon=''):
 
 
 def set_mute(toggle=True):
+    ''' Set mute using Kodi JSON-RPC interface '''
     payload = '{"jsonrpc": "2.0", "method": "Application.SetMute", "params": {"mute": %s}}' % ('true' if toggle else 'false')
     result = xbmc.executeJSONRPC(payload)
     log_info(msg="Sending JSON-RPC payload: '%s' returns '%s'" % (payload, result))
 
 
 def run_builtin(builtin):
+    ''' Run Kodi builtins while catching exceptions '''
     log_info(msg="Executing builtin '%s'" % builtin)
     try:
         xbmc.executebuiltin(builtin)
@@ -105,6 +115,7 @@ def run_builtin(builtin):
 
 
 def run_command(command, shell=False):
+    ''' Run commands on the OS while catching exceptions '''
     # TODO: Add options for running using su or sudo
     try:
         cmd = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=shell)
@@ -126,34 +137,58 @@ def run_command(command, shell=False):
 
 
 def func(function, *args):
+    ''' Execute a global function with arguments '''
     return globals()[function](*args)
 
 
 class TurnOffMonitor(xbmc.Monitor):
+    ''' This is the monitor to exit TurnOffScreensaver '''
 
     def __init__(self, *args, **kwargs):
+        ''' Initialize monitor '''
         self.action = kwargs['action']
 
     def onScreensaverDeactivated(self):
+        ''' Perform cleanup function '''
         self.action()
 
 
 class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
+    ''' The TurnOffScreensaver class managing the XML gui '''
 
     def __init__(self, *args, **kwargs):
+        ''' Initialize Screensaver '''
+        self.display = None
+        self.mute = None
+        self.power = None
+
         self.monitor = None
 
     def onInit(self):
-        self.display_method = int(addon.getSetting('display_method'))
-        self.display = DISPLAY_METHODS[self.display_method]
-        self.power_method = int(addon.getSetting('power_method'))
-        self.power = POWER_METHODS[self.power_method]
-        self.logoff = addon.getSetting('logoff')
+        ''' Perform this when the screensaver is started '''
+        display_method = int(addon.getSetting('display_method'))
+        power_method = int(addon.getSetting('power_method'))
+
+        self.display = DISPLAY_METHODS[display_method]
         self.mute = addon.getSetting('mute')
+        self.power = POWER_METHODS[power_method]
 
-        log_notice(msg='display_method=%s, power_method=%s, logoff=%s, mute=%s' % (self.display['name'], self.power['name'], self.logoff, self.mute))
+        logoff = addon.getSetting('logoff')
 
-        self.monitor = TurnOffMonitor(action=self.resume)
+        log_notice(msg='display_method=%s, power_method=%s, logoff=%s, mute=%s' % (self.display['name'], self.power['name'], logoff, self.mute))
+
+        # Turn off display
+        if self.display['name'] != 'do-nothing':
+            log_notice(msg="Turn display signal off using method '%s'" % self.display['name'])
+        func(self.display['function'], self.display['args_off'])
+
+        # FIXME: Screensaver always seems to lock when started, requires unlock and re-login
+        # Log off user
+        if logoff == 'true':
+            log_notice(msg='Log off user')
+            run_builtin('System.Logoff()')
+            #run_builtin('ActivateWindow(loginscreen)')
+            #run_builtin('ActivateWindowAndFocus(loginscreen,return)')
 
         # Mute audio
         if self.mute == 'true':
@@ -163,29 +198,15 @@ class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
 #            run_builtin('VolumeDown')
 #            run_builtin('Mute')
 
-        # FIXME: Screensaver always seems to lock when started, requires unlock and re-login
-        # Log off user
-        if self.logoff == 'true':
-            log_notice(msg='Log off user')
-            run_builtin('ActivateWindow("LoginScreen")')
-#            run_builtin('System.LogOff')
-
-        # Turn off display
-        if self.display_method != 0:
-            log_notice(msg="Turn display signal off using method '%s'" % self.display['name'])
-        func(self.display['function'], self.display['args_off'])
+        self.monitor = TurnOffMonitor(action=self.resume)
 
         # Power off system
-        if self.power_method != 0:
+        if self.power['name'] != 'do-nothing':
             log_notice(msg="Turn system off using method '%s'" % self.power['name'])
         func(self.power['function'], self.power['args_off'])
 
     def resume(self):
-        # Turn on display
-        if self.display_method != 0:
-            log_notice(msg="Turn display signal back on using method '%s'" % self.display['name'])
-        func(self.display['function'], self.display['args_on'])
-
+        ''' Perform this when the Screensaver is stopped '''
         # Unmute audio
         if self.mute == 'true':
             log_notice(msg='Unmute audio')
@@ -194,10 +215,21 @@ class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
             # NOTE: Since the Mute-builtin is a toggle, we need to do this to ensure Unmute
 #            run_builtin('VolumeUp')
 
+        # Turn on display
+        if self.display['name'] != 'do-nothing':
+            log_notice(msg="Turn display signal back on using method '%s'" % self.display['name'])
+        func(self.display['function'], self.display['args_on'])
+
+        # Destroy everything
+        self.exit()
+
     @atexit.register
-    def __del__(self):
-        del self.monitor
+    def exit(self):
+        ''' Clean up function '''
+        if hasattr(self, 'monitor'):
+            del self.monitor
         self.close()
+        del self
 
 
 if __name__ == '__main__':
