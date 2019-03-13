@@ -6,6 +6,60 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 
+# NOTE: The below order relates to resources/settings.xml
+DISPLAY_METHODS = [
+    dict(name='do-nothing', title='Do nothing',
+         function='log_info', args_off='Do nothing to power off display', args_on='Do nothing to power back on display'),
+    dict(name='cec-builtin', title='CEC (buil-in)',
+         function='run_builtin', args_off='CECStandby', args_on='CECActivateSource'),
+    dict(name='no-signal-rpi', title='No Signal on Raspberry Pi (using vcgencmd)',
+         function='run_command',
+         args_off=['vcgencmd', 'display_power', '0'],
+         args_on=['vcgencmd', 'display_power', '1']),
+    dict(name='dpms-builtin', title='DPMS (built-in)',
+         function='run_builtin', args_off='ToggleDPMS', args_on='ToggleDPMS'),
+    dict(name='dpms-xset', title='DPMS (using xset)',
+         function='run_command',
+         args_off=['xset', 'dpms', 'force', 'off'],
+         args_on=['xset', 'dpms', 'force', 'on']),
+    dict(name='dpms-vbetool', title='DPMS (using vbetool)',
+         function='run_command',
+         args_off=['vbetool', 'dpms', 'off'],
+         args_on=['vbetool', 'dpms', 'on']),
+    # TODO: This needs more outside testing
+    dict(name='dpms-xrandr', title='DPMS (using xrandr)',
+         function='run_command',
+         args_off=['xrandr', '--output CRT-0', 'off'],
+         args_on=['xrandr', '--output CRT-0', 'on']),
+    # TODO: This needs more outside testing
+    dict(name='cec-android', title='CEC on Android (kernel)',
+         function='run_command',
+         args_off=['su', '-c', 'echo 0 >/sys/devices/virtual/graphics/fb0/cec'],
+         args_on=['su', '-c', 'echo 1 >/sys/devices/virtual/graphics/fb0/cec']),
+    # NOTE: Contrary to what one might think, 1 means off and 0 means on
+    dict(name='backlight-rpi', title='Backlight on Raspberry Pi (kernel)',
+         function='run_command',
+         args_off=['su', '-c', 'echo 1 >/sys/class/backlight/rpi_backlight/bl_power'],
+         args_on=['su', '-c', 'echo 0 >/sys/class/backlight/rpi_backlight/bl_power']),
+]
+
+POWER_METHODS = [
+    dict(name='do-nothing', title='Do nothing',
+         function='log_info', args_off='Do nothing to power off system'),
+    dict(name='suspend-builtin', title='Suspend (built-in)',
+         function='run_builtin', args_off='Suspend'),
+    dict(name='hibernate-builtin', title='Hibernate (built-in)',
+         function='run_builtin', args_off='Hibernate'),
+    dict(name='quit-builtin', title='Quit (built-in)',
+         function='run_builtin', args_off='Quit'),
+    dict(name='shutdown-builtin', title='ShutDown action (built-in)',
+         function='run_builtin', args_off='ShutDown'),
+    dict(name='reboot-builtin', title='Reboot (built-in)',
+         function='run_builtin', args_off='Reboot'),
+    dict(name='powerdown-builtin', title='Powerdown (built-in)',
+         function='run_builtin', args_off='Powerdown'),
+]
+
 
 def log_error(msg='', level=xbmc.LOGERROR):
     xbmc.log(msg='[%s] %s' % (addon_id, msg), level=level)
@@ -63,6 +117,10 @@ def run_command(command, shell=False):
         sys.exit(2)
 
 
+def func(function, *args):
+    return globals()[function](*args)
+
+
 class TurnOffMonitor(xbmc.Monitor):
 
     def __init__(self, *args, **kwargs):
@@ -75,13 +133,22 @@ class TurnOffMonitor(xbmc.Monitor):
 class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
 
     def __init__(self, *args, **kwargs):
-        pass
+        self.monitor = None
 
     def onInit(self):
-        self._monitor = TurnOffMonitor(self.exit)
+        self.display_method = int(addon.getSetting('display_method'))
+        self.display = DISPLAY_METHODS[self.display_method]
+        self.power_method = int(addon.getSetting('power_method'))
+        self.power = POWER_METHODS[self.power_method]
+        self.logoff = addon.getSetting('logoff')
+        self.mute = addon.getSetting('mute')
+
+        log_notice(msg='display_method=%s, power_method=%s, logoff=%s, mute=%s' % (self.display['name'], self.power['name'], self.logoff, self.mute))
+
+        self.monitor = TurnOffMonitor(action=self.resume)
 
         # Mute audio
-        if mute == 'true':
+        if self.mute == 'true':
             log_notice(msg='Mute audio')
             set_mute(True)
             # NOTE: Since the Mute-builtin is a toggle, we need to do this to ensure Mute
@@ -90,78 +157,29 @@ class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
 
         # FIXME: Screensaver always seems to lock when started, requires unlock and re-login
         # Log off user
-        if logoff == 'true':
+        if self.logoff == 'true':
             log_notice(msg='Log off user')
-            run_builtin('System.Logoff()')
+            run_builtin('ActivateWindow("LoginScreen")')
+#            run_builtin('System.LogOff')
 
         # Turn off display
-        if display_method != 0:
-            log_notice(msg='Turn display signal off using method %s' % display_method)
-
-        if display_method == '1':  # CEC (built-in)
-            run_builtin('CECStandby')
-        elif display_method == '2':  # No Signal on Raspberry Pi (using vcgencmd)
-            run_command(['vcgencmd', 'display_power', '0'])
-        elif display_method == '3':  # DPMS (built-in)
-            run_builtin('ToggleDPMS')
-        elif display_method == '4':  # DPMS (using xset)
-            run_command(['xset', 'dpms', 'force', 'off'])
-        elif display_method == '5':  # DPMS (using vbetool)
-            run_command(['vbetool', 'dpms', 'off'])
-        elif display_method == '6':  # DPMS (using xrandr)
-            # NOTE: This needs more outside testing
-            run_command(['xrandr', '--output CRT-0', 'off'])
-        elif display_method == '7':  # CEC on Android (kernel)
-            # NOTE: This needs more outside testing
-            run_command(['su', '-c', 'echo 0 >/sys/devices/virtual/graphics/fb0/cec'], shell=True)
-        elif display_method == '8':  # Backlight on Raspberry Pi (kernel)
-            # NOTE: Contrary to what you might think, 1 means off
-            run_command(['su', '-c', 'echo 1 >/sys/class/backlight/rpi_backlight/bl_power'], shell=True)
+        if self.display_method != 0:
+            log_notice(msg="Turn display signal off using method '%s'" % self.display['name'])
+        func(self.display['function'], self.display['args_off'])
 
         # Power off system
-        if power_method != 0:
-            log_notice(msg='Turn system off using method %s' % power_method)
-        if power_method == '1':  # Suspend (built-in)
-            run_builtin('Suspend')
-        elif power_method == '2':  # Hibernate (built-in)
-            run_builtin('Hibernate')
-        elif power_method == '3':  # Quit (built-in)
-            run_builtin('Quit')
-        elif power_method == '4':  # ShutDown action (built-in)
-            run_builtin('ShutDown')
-        elif power_method == '5':  # Reboot (built-in)
-            run_builtin('Reboot')
-        elif power_method == '6':  # PowerDown (built-in)
-            run_builtin('PowerDown')
-        elif power_method == '7':  # Android POWER key event (using input)
-            run_command(['su', '-c', 'input keyevent KEYCODE_POWER'], shell=True)
+        if self.power_method != 0:
+            log_notice(msg="Turn system off using method '%s'" % self.power['name'])
+        func(self.power['function'], self.power['args_off'])
 
     def resume(self):
         # Turn on display
-        if display_method != 0:
-            log_notice(msg='Turn display signal back on using method %s' % display_method)
-        if display_method == '1':  # CEC (built-in)
-            run_builtin('CECActivateSource')
-        elif display_method == '2':  # No Signal on Raspberry Pi (using vcgencmd)
-            run_command(['vcgencmd', 'display_power', '1'])
-        elif display_method == '3':  # DPMS (built-in)
-            run_builtin('ToggleDPMS')
-        elif display_method == '4':  # DPMS (using xset)
-            run_command(['xset', 'dpms', 'force', 'on'])
-        elif display_method == '5':  # DPMS (using vbetool)
-            run_command(['vbetool', 'dpms', 'on'])
-        elif display_method == '6':  # DPMS (using xrandr)
-            # NOTE: This needs more outside testing
-            run_command(['xrandr', '--output CRT-0', 'on'])
-        elif display_method == '7':  # CEC on Android (kernel)
-            # NOTE: This needs more outside testing
-            run_command(['su', '-c', 'echo 1 >/sys/devices/virtual/graphics/fb0/cec'], shell=True)
-        elif display_method == '8':  # Backlight on Raspberry Pi (kernel)
-            # NOTE: Contrary to what you might think, 0 means on
-            run_command(['su', '-c', 'echo 0 >/sys/class/backlight/rpi_backlight/bl_power'], shell=True)
+        if self.display_method != 0:
+            log_notice(msg="Turn display signal back on using method '%s'" % self.display['name'])
+        func(self.display['function'], self.display['args_on'])
 
         # Unmute audio
-        if mute == 'true':
+        if self.mute == 'true':
             log_notice(msg='Unmute audio')
             set_mute(False)
 #            run_builtin('Mute')
@@ -170,7 +188,7 @@ class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
 
     @atexit.register
     def __del__(self):
-        del self._monitor
+        del self.monitor
         self.close()
 
 
@@ -181,10 +199,6 @@ if __name__ == '__main__':
     addon_id = addon.getAddonInfo('id')
     addon_path = addon.getAddonInfo('path').decode('utf-8')
     addon_icon = addon.getAddonInfo('icon')
-    display_method = addon.getSetting('display_method')
-    power_method = addon.getSetting('power_method')
-    logoff = addon.getSetting('logoff')
-    mute = addon.getSetting('mute')
 
     # Do not start screensaver when command fails
     screensaver = TurnOffScreensaver('gui.xml', addon_path, 'default')
