@@ -212,3 +212,4 @@ if __name__ == '__main__':
     screensaver = TurnOffScreensaver('gui.xml', addon_path, 'default')
     screensaver.doModal()
     del screensaver
+    sys.modules.clear()
