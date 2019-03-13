@@ -10,6 +10,10 @@ def log_error(msg='', level=xbmc.LOGERROR):
     xbmc.log(msg='[%s] %s' % (addon_id, msg), level=level)
 
 
+def log_info(msg='', level=xbmc.LOGINFO):
+    xbmc.log(msg='[%s] %s' % (addon_id, msg), level=level)
+
+
 def log_notice(msg='', level=xbmc.LOGNOTICE):
     xbmc.log(msg='[%s] %s' % (addon_id, msg), level=level)
 
@@ -22,8 +26,14 @@ def popup(heading='', msg='', delay=10000, icon=''):
     xbmcgui.Dialog().notification(heading, msg, icon, delay)
 
 
+def set_mute(toggle=True):
+    payload = '{"jsonrpc": "2.0", "method": "Application.SetMute", "params": {"mute": %s}}' % ('true' if toggle else 'false')
+    result = xbmc.executeJSONRPC(payload)
+    log_info(msg="Sending JSON-RPC payload: '%s' returns '%s'" % (payload, result))
+
+
 def run_builtin(builtin):
-    log_notice(msg="Executing builtin '%s'" % builtin)
+    log_info(msg="Executing builtin '%s'" % builtin)
     try:
         xbmc.executebuiltin(builtin)
     except Exception as e:
@@ -92,7 +102,6 @@ class Screensaver(xbmcgui.WindowXMLDialog):
             # NOTE: Contrary to what you might think, 1 means off
             run_command(['su', '-c', 'echo 1 >/sys/class/backlight/rpi_backlight/bl_power'], shell=True)
 
-
         # FIXME: Screensaver always seems to lock when started, requires unlock and re-login
         # Log off user
         if logoff == 'true':
@@ -100,10 +109,11 @@ class Screensaver(xbmcgui.WindowXMLDialog):
 
         # Mute audio
         if mute == 'true':
+            log_notice(msg='Mute audio')
+            set_mute(True)
             # NOTE: Since the Mute-builtin is a toggle, we need to do this to ensure Mute
-            run_builtin('VolumeDown')
-            run_builtin('VolumeUp')
-            run_builtin('Mute')
+#            run_builtin('VolumeDown')
+#            run_builtin('Mute')
 
         # Power off system
         if power_method != 0:
@@ -129,9 +139,11 @@ class Screensaver(xbmcgui.WindowXMLDialog):
     def exit(self):
         # Unmute audio
         if mute == 'true':
+            log_notice(msg='Unmute audio')
+            set_mute(False)
+#            run_builtin('Mute')
             # NOTE: Since the Mute-builtin is a toggle, we need to do this to ensure Unmute
-            run_builtin('VolumeDown')
-            run_builtin('VolumeUp')
+#            run_builtin('VolumeUp')
 
         # Turn on display
         if display_method != 0:
@@ -158,6 +170,7 @@ class Screensaver(xbmcgui.WindowXMLDialog):
 
         del self._monitor
         self.close()
+
 
 if __name__ == '__main__':
     addon = xbmcaddon.Addon()
