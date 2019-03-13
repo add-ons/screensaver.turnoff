@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+
+# Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
+# GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
+
+from __future__ import absolute_import, division, print_function, unicode_literals
+__metaclass__ = type
+
 import atexit
 import subprocess
 import sys
