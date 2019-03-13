@@ -80,6 +80,20 @@ class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
     def onInit(self):
         self._monitor = TurnOffMonitor(self.exit)
 
+        # Mute audio
+        if mute == 'true':
+            log_notice(msg='Mute audio')
+            set_mute(True)
+            # NOTE: Since the Mute-builtin is a toggle, we need to do this to ensure Mute
+#            run_builtin('VolumeDown')
+#            run_builtin('Mute')
+
+        # FIXME: Screensaver always seems to lock when started, requires unlock and re-login
+        # Log off user
+        if logoff == 'true':
+            log_notice(msg='Log off user')
+            run_builtin('System.Logoff()')
+
         # Turn off display
         if display_method != 0:
             log_notice(msg='Turn display signal off using method %s' % display_method)
@@ -104,19 +118,6 @@ class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
             # NOTE: Contrary to what you might think, 1 means off
             run_command(['su', '-c', 'echo 1 >/sys/class/backlight/rpi_backlight/bl_power'], shell=True)
 
-        # FIXME: Screensaver always seems to lock when started, requires unlock and re-login
-        # Log off user
-        if logoff == 'true':
-            run_builtin('System.Logoff()')
-
-        # Mute audio
-        if mute == 'true':
-            log_notice(msg='Mute audio')
-            set_mute(True)
-            # NOTE: Since the Mute-builtin is a toggle, we need to do this to ensure Mute
-#            run_builtin('VolumeDown')
-#            run_builtin('Mute')
-
         # Power off system
         if power_method != 0:
             log_notice(msg='Turn system off using method %s' % power_method)
@@ -136,14 +137,6 @@ class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
             run_command(['su', '-c', 'input keyevent KEYCODE_POWER'], shell=True)
 
     def resume(self):
-        # Unmute audio
-        if mute == 'true':
-            log_notice(msg='Unmute audio')
-            set_mute(False)
-#            run_builtin('Mute')
-            # NOTE: Since the Mute-builtin is a toggle, we need to do this to ensure Unmute
-#            run_builtin('VolumeUp')
-
         # Turn on display
         if display_method != 0:
             log_notice(msg='Turn display signal back on using method %s' % display_method)
@@ -166,6 +159,14 @@ class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
         elif display_method == '8':  # Backlight on Raspberry Pi (kernel)
             # NOTE: Contrary to what you might think, 0 means on
             run_command(['su', '-c', 'echo 0 >/sys/class/backlight/rpi_backlight/bl_power'], shell=True)
+
+        # Unmute audio
+        if mute == 'true':
+            log_notice(msg='Unmute audio')
+            set_mute(False)
+#            run_builtin('Mute')
+            # NOTE: Since the Mute-builtin is a toggle, we need to do this to ensure Unmute
+#            run_builtin('VolumeUp')
 
     @atexit.register
     def __del__(self):
