@@ -34,8 +34,8 @@ msgid "- CEC methods require CEC device support. Check vendor manual."
 msgstr "- CEC methods require CEC device support. Check vendor manual."
 
 msgctxt "#33105"
-msgid "- No Signal method disables video signal. Device may go to sleep or turn off."
-msgstr "- No Signal method disables video signal. Device may go to sleep or turn off."
+msgid "- No Signal method disables video signal to display device."
+msgstr "- No Signal method disables video signal to display device."
 
 msgctxt "#33106"
 msgid "- DPMS methods make use of VESA DPMS capabilities of your monitor."
