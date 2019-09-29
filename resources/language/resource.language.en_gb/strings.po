@@ -89,6 +89,10 @@ msgctxt "#33119"
 msgid "HDMI on Raspberry Pi (using tvservice)"
 msgstr ""
 
+msgctxt "#33120"
+msgid "Backlight on Odroid C2 (kernel)"
+msgstr ""
+
 msgctxt "#33200"
 msgid "Power"
 msgstr ""

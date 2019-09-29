@@ -36,7 +36,6 @@ class TestScreensaver(unittest.TestCase):
         time.sleep(5)
         turnoff.resume()
 
-    @unittest.expectedFailure
     def test_screensaver_command(self):
         ''' Test enabling screensaver '''
         screensaver.ADDON.settings['display_method'] = '2'

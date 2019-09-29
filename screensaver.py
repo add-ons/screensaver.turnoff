@@ -58,6 +58,10 @@ DISPLAY_METHODS = [
          function='run_command',
          args_off=['tvservice', '-o'],
          args_on=['tvservice', '-p']),
+    dict(name='backlight-odroid-c2', title='Backlight on Odroid C2 (kernel)',
+         function='run_command',
+         args_off=['su', '-c', 'echo 0 >/sys/class/amhdmitx/amhdmitx0/phy'],
+         args_on=['su', '-c', 'echo 1 >/sys/class/amhdmitx/amhdmitx0/phy']),
 ]
 
 POWER_METHODS = [
