@@ -2,7 +2,7 @@
 <settings>
   <category id="display" label="33100">
     <setting type="lsep" label="33101"/> <!-- display intro -->
-    <setting id="display_method" type="select" label="33102" help="33103" lvalues="33110|33111|33112|33113|33114|33115|33116|33117|33118|33119|33120" default="1"/>
+    <setting id="display_method" type="select" label="33102" help="33103" lvalues="33110|33111|33112|33113|33114|33115|33116|33117|33118|33119" default="1"/>
     <setting type="text" label="33103" enable="false"/> <!-- display_label -->
     <setting type="text" label="33104" enable="false"/> <!-- cec_label -->
     <setting type="text" label="33105" enable="false"/> <!-- rpi_label -->
