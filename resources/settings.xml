@@ -22,9 +22,12 @@
     <setting id="mute" type="bool" label="33321" help="33322" default="true"/>
     <setting type="text" label="33322" enable="false"/> <!-- mute_label -->
   </category>
-  <!-- category id="test" label="33400" -->
-    <!-- setting type="lsep" label="33401"/ --> <!-- text drive screensaver -->
+    <category label="33400"> <!-- Expert -->
+    <!-- setting type="lsep" label="33401"/ --> <!-- test drive screensaver -->
     <!-- setting type="action" label="33411" action="Addon.Default.Set(xbmc.ui.screensaver)"/ --> <!-- select -->
     <!-- setting type="action" label="33412" action="ActivateScreensaver"/ --> <!-- activate -->
   <!-- /category -->
+        <setting label="33420" type="lsep"/> <!-- Logging -->
+        <setting label="33421" help="33422" type="enum" id="max_log_level" lvalues="33430|33431|33432|33433" default="0"/>
+    </category>
 </settings>

@@ -23,7 +23,7 @@ class TestScreensaver(unittest.TestCase):
         screensaver.ADDON.settings['power_method'] = '0'
         turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.ADDON_PATH, 'default')
         turnoff.onInit()
-        time.sleep(5)
+        time.sleep(2)
         turnoff.resume()
 
     @staticmethod
@@ -33,7 +33,7 @@ class TestScreensaver(unittest.TestCase):
         screensaver.ADDON.settings['power_method'] = '1'
         turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.ADDON_PATH, 'default')
         turnoff.onInit()
-        time.sleep(5)
+        time.sleep(2)
         turnoff.resume()
 
     def test_screensaver_command(self):
@@ -42,11 +42,11 @@ class TestScreensaver(unittest.TestCase):
         screensaver.ADDON.settings['power_method'] = '2'
         turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.ADDON_PATH, 'default')
         with self.assertRaises(SystemExit) as init:
-            turnoff.onInit()
+            turnoff.onInit()  # We cannot find the binary
         self.assertEqual(init.exception.code, 2)
-        time.sleep(5)
+        time.sleep(2)
         with self.assertRaises(SystemExit) as resume:
-            turnoff.resume()
+            turnoff.resume()  # We cannot find the binary
         self.assertEqual(resume.exception.code, 2)
 
 

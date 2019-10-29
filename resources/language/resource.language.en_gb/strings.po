@@ -162,7 +162,7 @@ msgid "Ensure no audio is produced inadvertently, e.g. when using A/V receiver."
 msgstr ""
 
 msgctxt "#33400"
-msgid "Test"
+msgid "Expert"
 msgstr ""
 
 msgctxt "#33401"
@@ -175,4 +175,28 @@ msgstr ""
 
 msgctxt "#33412"
 msgid "Activate Screensaver"
+msgstr ""
+
+msgctxt "#33420"
+msgid "Logging"
+msgstr ""
+
+msgctxt "#33421"
+msgid "Log level"
+msgstr ""
+
+msgctxt "#33430"
+msgid "Quiet"
+msgstr ""
+
+msgctxt "#33431"
+msgid "Info"
+msgstr ""
+
+msgctxt "#33432"
+msgid "Verbose"
+msgstr ""
+
+msgctxt "#33433"
+msgid "Debug"
 msgstr ""

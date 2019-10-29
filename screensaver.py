@@ -5,19 +5,21 @@
 
 from __future__ import absolute_import, division, unicode_literals
 import sys
-# import atexit
+import atexit
 import subprocess
 
 from xbmc import executebuiltin, executeJSONRPC, log as xlog, Monitor
 from xbmcaddon import Addon
 from xbmcgui import Dialog, WindowXMLDialog
 
+DEBUG_LOGGING = 0
+
 # NOTE: The below order relates to resources/settings.xml
 DISPLAY_METHODS = [
     dict(name='do-nothing', title='Do nothing',
          function='log',
-         args_off=[1, 'Do nothing to power off display'],
-         args_on=[1, 'Do nothing to power back on display']),
+         args_off=[2, 'Do nothing to power off display'],
+         args_on=[2, 'Do nothing to power back on display']),
     dict(name='cec-builtin', title='CEC (buil-in)',
          function='run_builtin',
          args_off=['CECStandby'],
@@ -61,7 +63,7 @@ DISPLAY_METHODS = [
 
 POWER_METHODS = [
     dict(name='do-nothing', title='Do nothing',
-         function='log', args=[1, 'Do nothing to power off system']),
+         function='log', kwargs_off=dict(level=2, msg='Do nothing to power off system')),
     dict(name='suspend-builtin', title='Suspend (built-in)',
          function='jsonrpc', kwargs_off=dict(method='System.Suspend')),
     dict(name='hibernate-builtin', title='Hibernate (built-in)',
@@ -98,7 +100,8 @@ def to_unicode(text, encoding='utf-8'):
 
 def log(level=1, msg='', **kwargs):
     ''' Log info messages to Kodi '''
-    if not DEBUG_LOGGING and not (level <= MAX_LOG_LEVEL or MAX_LOG_LEVEL == 0):
+    max_log_level = int(get_setting('max_log_level', 0))
+    if not DEBUG_LOGGING and not (level <= max_log_level or max_log_level == 0):
         return
     from string import Formatter
     if kwargs:
@@ -128,6 +131,20 @@ def jsonrpc(**kwargs):
     return result
 
 
+def get_setting(setting_id, default=None):
+    ''' Get an add-on setting '''
+    value = to_unicode(ADDON.getSetting(setting_id))
+    if value == '' and default is not None:
+        return default
+    return value
+
+
+def get_global_setting(setting):
+    ''' Get a Kodi setting '''
+    result = jsonrpc(method='Settings.GetSettingValue', params=dict(setting=setting))
+    return result.get('result', {}).get('value')
+
+
 def popup(heading='', msg='', delay=10000, icon=''):
     ''' Bring up a pop-up with a meaningful error '''
     if not heading:
@@ -139,22 +156,13 @@ def popup(heading='', msg='', delay=10000, icon=''):
 
 def set_mute(toggle=True):
     ''' Set mute using Kodi JSON-RPC interface '''
-    toggle = 'true' if toggle else 'false'
-    result = jsonrpc(method='Application.SetMute', params=dict(mute=toggle))
-#    if '"result":'+toggle not in result:
-#        log_error(msg="Error in JSON-RPC: '{payload}' returns '{result}'", payload=payload, result=result)
-#        popup(msg="Error in JSON-RPC Application.SetMute: '%s'" % result)
-    return result
+    jsonrpc(method='Application.SetMute', params=dict(mute=toggle))
 
 
 def activate_window(window='home'):
     ''' Set mute using Kodi JSON-RPC interface '''
 #    result = jsonrpc(method='GUI.ActivateWindow', params=dict(window=window, parameters=['Home']))
-    result = jsonrpc(method='GUI.ActivateWindow', params=dict(window=window, parameters=[]))
-#    if '"result":"OK"' not in result:
-#        log_error(msg="Error in JSON-RPC: '{payload}' returns '{result}'", payload=payload, result=result)
-#        popup(msg="Error in JSON-RPC GUI.ActivateWindow: '%s'" % result)
-    return result
+    jsonrpc(method='GUI.ActivateWindow', params=dict(window=window))
 
 
 def run_builtin(builtin):
@@ -190,71 +198,56 @@ def func(function, *args, **kwargs):
     return globals()[function](*args, **kwargs)
 
 
-class TurnOffMonitor(Monitor, object):
-    ''' This is the monitor to exit TurnOffScreensaver '''
-
-    def __init__(self, **kwargs):
-        ''' Initialize monitor '''
-        self.action = kwargs.get('action')
-        super(TurnOffMonitor, self).__init__()
-
-    def onScreensaverDeactivated(self):  # pylint: disable=invalid-name
-        ''' Perform cleanup function '''
-        self.action()
-
-
 class TurnOffDialog(WindowXMLDialog, object):
     ''' The TurnOffScreensaver class managing the XML gui '''
 
-    def __init__(self, *args):
+    def __init__(self, *args):  # pylint: disable=super-init-not-called,unused-argument
         ''' Initialize dialog '''
         self.display = None
+        self.logoff = None
         self.monitor = None
         self.mute = None
         self.power = None
-        super(TurnOffDialog, self).__init__(*args)
+        atexit.register(self.exit)
 
     def onInit(self):  # pylint: disable=invalid-name
         ''' Perform this when the screensaver is started '''
-        display_method = int(ADDON.getSetting('display_method'))
-        power_method = int(ADDON.getSetting('power_method'))
+        self.logoff = get_setting('logoff', 'false')
+        self.mute = get_setting('mute', 'true')
 
+        display_method = int(get_setting('display_method', 0))
         self.display = DISPLAY_METHODS[display_method]
-        self.mute = to_unicode(ADDON.getSetting('mute'))
+
+        power_method = int(get_setting('power_method', 0))
         self.power = POWER_METHODS[power_method]
 
-        logoff = to_unicode(ADDON.getSetting('logoff'))
+        log(3, msg='display_method={display}, power_method={power}, logoff={logoff}, mute={mute}',
+            display=self.display.get('name'), power=self.power.get('name'), logoff=self.logoff, mute=self.mute)
 
-        log(2, msg='display_method={display_method}, power_method={power_method}, logoff={logoff}, mute={mute}',
-            display_method=self.display.get('name'), power_method=self.power.get('name'),
-            logoff=logoff, mute=self.mute)
         # Turn off display
         if self.display.get('name') != 'do-nothing':
-            log(1, msg="Turn display signal off using method '{display_method}'", display_method=self.display.get('name'))
+            log(1, msg="Turn display off using method '{name}'", **self.display)
         func(self.display.get('function'), *self.display.get('args_off'))
 
         # FIXME: Screensaver always seems to lock when started, requires unlock and re-login
         # Log off user
-        if logoff == 'true':
+        if self.logoff == 'true':
             log(1, msg='Log off user')
-            activate_window('loginscreen')
 #            run_builtin('System.LogOff')
+            activate_window('loginscreen')
 #            run_builtin('ActivateWindow(loginscreen)')
 #            run_builtin('ActivateWindowAndFocus(loginscreen,return)')
 
         # Mute audio
         if self.mute == 'true':
             log(1, msg='Mute audio')
-            set_mute(True)
-            # NOTE: Since the Mute-builtin is a toggle, we need to do this to ensure Mute
-#            run_builtin('VolumeDown')
-#            run_builtin('Mute')
+            set_mute(toggle=True)
 
         self.monitor = TurnOffMonitor(action=self.resume)
 
         # Power off system
         if self.power.get('name') != 'do-nothing':
-            log(1, msg="Turn system off using method '{power_method}'", power_method=self.power.get('name'))
+            log(1, msg="Turn system off using method '{name}'", **self.power)
         func(self.power.get('function'), **self.power.get('kwargs_off', {}))
 
     def resume(self):
@@ -262,21 +255,17 @@ class TurnOffDialog(WindowXMLDialog, object):
         # Unmute audio
         if self.mute == 'true':
             log(1, msg='Unmute audio')
-            set_mute(False)
-#            run_builtin('Mute')
-            # NOTE: Since the Mute-builtin is a toggle, we need to do this to ensure Unmute
-#            run_builtin('VolumeUp')
+            set_mute(toggle=False)
 
         # Turn on display
         if self.display.get('name') != 'do-nothing':
-            log(1, msg="Turn display signal back on using method '{display_method}'", display_method=self.display.get('name'))
+            log(1, msg="Turn display back on using method '{name}'", **self.display)
         func(self.display.get('function'), *self.display.get('args_on'))
 
         # Clean up everything
-        self.cleanup()
+        self.exit()
 
-#    @atexit.register
-    def cleanup(self):
+    def exit(self):
         ''' Clean up function '''
         if hasattr(self, 'monitor'):
             del self.monitor
@@ -285,14 +274,25 @@ class TurnOffDialog(WindowXMLDialog, object):
         del self
 
 
+class TurnOffMonitor(Monitor, object):
+    ''' This is the monitor to exit TurnOffScreensaver '''
+
+    def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
+        ''' Initialize monitor '''
+        self.action = kwargs.get('action')
+
+    def onScreensaverDeactivated(self):  # pylint: disable=invalid-name
+        ''' Perform cleanup function '''
+        self.action()
+
+
 ADDON = Addon()
 ADDON_NAME = to_unicode(ADDON.getAddonInfo('name'))
 ADDON_ID = to_unicode(ADDON.getAddonInfo('id'))
 ADDON_PATH = to_unicode(ADDON.getAddonInfo('path'))
 ADDON_ICON = to_unicode(ADDON.getAddonInfo('icon'))
 
-DEBUG_LOGGING = True
-MAX_LOG_LEVEL = 3
+DEBUG_LOGGING = get_global_setting('debug.showloginfo')
 
 if __name__ == '__main__':
     # Do not start screensaver when command fails
