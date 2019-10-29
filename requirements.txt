@@ -1,0 +1,6 @@
+codecov
+kodi-addon-checker
+polib
+python-dateutil
+pylint
+tox-travis
