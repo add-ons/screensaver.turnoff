@@ -1,3 +1,9 @@
+[![GitHub release](https://img.shields.io/github/release/dagwieers/screensaver.turnoff.svg)](https://github.com/dagwieers/screensaver.turnoff/releases)
+[![Build Status](https://travis-ci.org/dagwieers/screensaver.turnoff.svg?branch=master)](https://travis-ci.org/dagwieers/screensaver.turnoff)
+[![Codecov status](https://img.shields.io/codecov/c/github/dagwieers/screensaver.turnoff/master)](https://codecov.io/gh/dagwieers/screensaver.turnoff/branch/master)
+[![License: GPLv3](https://img.shields.io/badge/License-GPLv3-yellow.svg)](https://opensource.org/licenses/GPL-3.0)
+[![Contributors](https://img.shields.io/github/contributors/dagwieers/screensaver.turnoff.svg)](https://github.com/dagwieers/screensaver.turnoff/graphs/contributors)
+
 # Kodi screensaver that turns your screen off to save power
 
 This Kodi screensaver turns your TV, projector or monitor off, so it can actually "save your screen".
@@ -27,6 +33,12 @@ It supports the following methods:
 
 - **CEC on Android (kernel)**
   - The screensaver immediately forces the display off using kernel CEC controls and turns off device.
+
+- **Backlight on Raspberry Pi (kernel)**
+  - The screensaver turns off the backlight of the display. This only works on Raspberry Pi.
+
+- **HDMI on Raspberry Pi (tvservice)**
+  - The screensaver turns off the HDMI output using the 'tvservice' utility. This only works on Raspberry Pi, or possible other similar Broadcom chipsets.
 
 
 Optionally it also can put your system to sleep or power it off.
