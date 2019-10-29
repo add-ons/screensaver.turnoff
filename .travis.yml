@@ -18,7 +18,7 @@ install:
 script:
 - tox
 - tox -e flake8
-- pylint screensaver.py
+- pylint screensaver.py test/
 #- msgcmp resources/language/resource.language.{nl_nl,en_gb}/strings.po
 #- kodi-addon-checker . --branch=krypton
 #- kodi-addon-checker . --branch=leia

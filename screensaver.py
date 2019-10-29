@@ -64,17 +64,17 @@ POWER_METHODS = [
     dict(name='do-nothing', title='Do nothing',
          function='log', args=[1, 'Do nothing to power off system']),
     dict(name='suspend-builtin', title='Suspend (built-in)',
-         function='jsonrpc', kwargs=dict(method='System.Suspend')),
+         function='jsonrpc', kwargs_off=dict(method='System.Suspend')),
     dict(name='hibernate-builtin', title='Hibernate (built-in)',
-         function='jsonrpc', kwargs=dict(method='System.Hibernate')),
+         function='jsonrpc', kwargs_off=dict(method='System.Hibernate')),
     dict(name='quit-builtin', title='Quit (built-in)',
-         function='jsonrpc', kwargs=dict(method='Application.Quit')),
+         function='jsonrpc', kwargs_off=dict(method='Application.Quit')),
     dict(name='shutdown-builtin', title='ShutDown action (built-in)',
-         function='jsonrpc', kwargs=dict(method='System.Shutdown')),
+         function='jsonrpc', kwargs_off=dict(method='System.Shutdown')),
     dict(name='reboot-builtin', title='Reboot (built-in)',
-         function='jsonrpc', kwargs=dict(method='System.Reboot')),
+         function='jsonrpc', kwargs_off=dict(method='System.Reboot')),
     dict(name='powerdown-builtin', title='Powerdown (built-in)',
-         function='jsonrpc', kwargs=dict(method='System.Powerdown')),
+         function='jsonrpc', kwargs_off=dict(method='System.Powerdown')),
 ]
 
 
@@ -168,11 +168,11 @@ def run_builtin(builtin):
         popup(msg="Exception executing builtin '%s': %s" % (builtin, exc))
 
 
-def run_command(command, shell=False):
+def run_command(*command, **kwargs):
     ''' Run commands on the OS while catching exceptions '''
     # TODO: Add options for running using su or sudo
     try:
-        cmd = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=shell)
+        cmd = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, **kwargs)
         (out, err) = cmd.communicate()
         if cmd.returncode == 0:
             log(2, msg="Running command '{command}' returned rc={rc}", command=' '.join(command), rc=cmd.returncode)
@@ -190,9 +190,9 @@ def run_command(command, shell=False):
         sys.exit(2)
 
 
-def func(function, *args):
+def func(function, *args, **kwargs):
     ''' Execute a global function with arguments '''
-    return globals()[function](*args)
+    return globals()[function](*args, **kwargs)
 
 
 class TurnOffMonitor(Monitor, object):
@@ -260,7 +260,7 @@ class TurnOffDialog(WindowXMLDialog, object):
         # Power off system
         if self.power.get('name') != 'do-nothing':
             log(1, msg="Turn system off using method '{power_method}'", power_method=self.power.get('name'))
-        func(self.power.get('function'), *self.power.get('args', []), **self.power.get('kwargs', {}))
+        func(self.power.get('function'), **self.power.get('kwargs_off', {}))
 
     def resume(self):
         ''' Perform this when the Screensaver is stopped '''

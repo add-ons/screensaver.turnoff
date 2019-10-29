@@ -15,13 +15,40 @@ xbmcgui = __import__('xbmcgui')
 
 
 class TestScreensaver(unittest.TestCase):
-    turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.ADDON_PATH, 'default')
 
-    def test_screensaver(self):
+    @staticmethod
+    def test_screensaver_log():
         ''' Test enabling screensaver '''
-        self.turnoff.onInit()
+        screensaver.ADDON.settings['display_method'] = '0'
+        screensaver.ADDON.settings['power_method'] = '0'
+        turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.ADDON_PATH, 'default')
+        turnoff.onInit()
         time.sleep(5)
-        self.turnoff.resume()
+        turnoff.resume()
+
+    @staticmethod
+    def test_screensaver_builtin():
+        ''' Test enabling screensaver '''
+        screensaver.ADDON.settings['display_method'] = '1'
+        screensaver.ADDON.settings['power_method'] = '1'
+        turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.ADDON_PATH, 'default')
+        turnoff.onInit()
+        time.sleep(5)
+        turnoff.resume()
+
+    @unittest.expectedFailure
+    def test_screensaver_command(self):
+        ''' Test enabling screensaver '''
+        screensaver.ADDON.settings['display_method'] = '2'
+        screensaver.ADDON.settings['power_method'] = '2'
+        turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.ADDON_PATH, 'default')
+        with self.assertRaises(SystemExit) as init:
+            turnoff.onInit()
+        self.assertEqual(init.exception.code, 2)
+        time.sleep(5)
+        with self.assertRaises(SystemExit) as resume:
+            turnoff.resume()
+        self.assertEqual(resume.exception.code, 2)
 
 
 if __name__ == '__main__':
