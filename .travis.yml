@@ -9,6 +9,7 @@ python:
 sudo: false
 
 env:
+  PYTHONPATH: resources/lib:test
   PYTHONIOENCODING: utf-8
 
 install:
@@ -18,6 +19,9 @@ script:
 - tox
 - tox -e flake8
 - pylint screensaver.py
+#- msgcmp resources/language/resource.language.{nl_nl,en_gb}/strings.po
+#- kodi-addon-checker . --branch=krypton
+#- kodi-addon-checker . --branch=leia
 - coverage run -m unittest discover
 - coverage run -a screensaver.py
 
