@@ -35,7 +35,7 @@ GLOBAL_SETTINGS = global_settings()
 PO = import_language(language=GLOBAL_SETTINGS.get('locale.language'))
 
 
-class Keyboard:
+class Keyboard(object):
     ''' A stub implementation of the xbmc Keyboard class '''
 
     def __init__(self, line='', heading=''):
@@ -53,7 +53,7 @@ class Keyboard:
         return 'test'
 
 
-class Monitor:
+class Monitor(object):
     ''' A stub implementation of the xbmc Monitor class '''
 
     def __init__(self, line='', heading=''):
@@ -68,7 +68,7 @@ class Monitor:
         return False
 
 
-class Player:
+class Player(object):
     ''' A stub implementation of the xbmc Player class '''
     def __init__(self):
         self._count = 0
@@ -100,7 +100,7 @@ class Player:
         return VideoInfoTag()
 
 
-class VideoInfoTag:
+class VideoInfoTag(object):
     ''' A stub implementation of the xbmc VideoInfoTag class '''
 
     def __init__(self):

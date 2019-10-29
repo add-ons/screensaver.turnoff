@@ -3,13 +3,13 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ''' This file implements the Kodi xbmcgui module, either using stubs or alternative functionality '''
 
-# pylint: disable=invalid-name,super-on-old-class,too-many-arguments,unused-argument,useless-super-delegation
+# pylint: disable=invalid-name,too-many-arguments,unused-argument
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from xbmcextra import kodi_to_ansi
 
 
-class Control:
+class Control(object):
     ''' A reimplementation of the xbmcgui Control class '''
 
     def __init__(self):
@@ -21,7 +21,7 @@ class Control:
         return
 
 
-class Dialog:
+class Dialog(object):
     ''' A reimplementation of the xbmcgui Dialog class '''
 
     def __init__(self):
@@ -46,13 +46,12 @@ class Dialog:
         ''' A stub implementation for the xbmcgui Dialog class info() method '''
 
     @staticmethod
-    def multiselect(heading, options, autoclose=0, preselect=None, useDetails=False):  # pylint: disable=useless-return
+    def multiselect(heading, options, autoclose=0, preselect=None, useDetails=False):
         ''' A stub implementation for the xbmcgui Dialog class multiselect() method '''
         if preselect is None:
             preselect = []
         heading = kodi_to_ansi(heading)
         print('\033[37;44;1mMULTISELECT:\033[35;49;1m [%s] \033[37;1m%s\033[39;0m' % (heading, ', '.join(options)))
-        return None
 
     @staticmethod
     def yesno(heading, line1, line2=None, line3=None, nolabel=None, yeslabel=None, autoclose=0):
@@ -76,7 +75,7 @@ class Dialog:
         return 'special://masterprofile/addon_data/script.module.inputstreamhelper/'
 
 
-class DialogProgress:
+class DialogProgress(object):
     ''' A reimplementation of the xbmcgui DialogProgress '''
 
     def __init__(self):
@@ -113,7 +112,7 @@ class DialogProgress:
             print('\033[1G\033[37;44;1mPROGRESS:\033[35;49;1m [%d%%]\033[39;0m' % (percentage), end='')
 
 
-class DialogBusy:
+class DialogBusy(object):
     ''' A reimplementation of the xbmcgui DialogBusy '''
 
     def __init__(self):
@@ -128,7 +127,7 @@ class DialogBusy:
         ''' A stub implementation for the xbmcgui DialogBusy class create() method '''
 
 
-class ListItem:
+class ListItem(object):
     ''' A reimplementation of the xbmcgui ListItem class '''
 
     def __init__(self, label='', label2='', iconImage='', thumbnailImage='', path='', offscreen=False):
@@ -182,7 +181,7 @@ class ListItem:
         return
 
 
-class Window:
+class Window(object):
     ''' A reimplementation of the xbmcgui Window '''
 
     def __init__(self, existingWindowId=-1):

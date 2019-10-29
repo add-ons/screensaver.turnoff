@@ -5,7 +5,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 import sys
-import atexit
+# import atexit
 import subprocess
 
 from xbmc import executebuiltin, executeJSONRPC, log as xlog, Monitor
@@ -15,15 +15,21 @@ from xbmcgui import Dialog, WindowXMLDialog
 # NOTE: The below order relates to resources/settings.xml
 DISPLAY_METHODS = [
     dict(name='do-nothing', title='Do nothing',
-         function='log_info', args_off='Do nothing to power off display', args_on='Do nothing to power back on display'),
+         function='log',
+         args_off=[1, 'Do nothing to power off display'],
+         args_on=[1, 'Do nothing to power back on display']),
     dict(name='cec-builtin', title='CEC (buil-in)',
-         function='run_builtin', args_off='CECStandby', args_on='CECActivateSource'),
+         function='run_builtin',
+         args_off=['CECStandby'],
+         args_on=['CECActivateSource']),
     dict(name='no-signal-rpi', title='No Signal on Raspberry Pi (using vcgencmd)',
          function='run_command',
          args_off=['vcgencmd', 'display_power', '0'],
          args_on=['vcgencmd', 'display_power', '1']),
     dict(name='dpms-builtin', title='DPMS (built-in)',
-         function='run_builtin', args_off='ToggleDPMS', args_on='ToggleDPMS'),
+         function='run_builtin',
+         args_off=['ToggleDPMS'],
+         args_on=['ToggleDPMS']),
     dict(name='dpms-xset', title='DPMS (using xset)',
          function='run_command',
          args_off=['xset', 'dpms', 'force', 'off'],
@@ -47,6 +53,7 @@ DISPLAY_METHODS = [
          function='run_command',
          args_off=['su', '-c', 'echo 1 >/sys/class/backlight/rpi_backlight/bl_power'],
          args_on=['su', '-c', 'echo 0 >/sys/class/backlight/rpi_backlight/bl_power']),
+    # NOTE: Fails to come back on RPIv3
     dict(name='tvservice-rpi', title='HDMI on Raspberry Pi (tvservice)',
          function='run_command',
          args_off=['tvservice', '-o'],
@@ -204,10 +211,13 @@ class TurnOffMonitor(Monitor, object):
 class TurnOffDialog(WindowXMLDialog, object):
     ''' The TurnOffScreensaver class managing the XML gui '''
 
-    display = None
-    monitor = None
-    mute = None
-    power = None
+    def __init__(self, *args):
+        ''' Initialize dialog '''
+        self.display = None
+        self.monitor = None
+        self.mute = None
+        self.power = None
+        super(TurnOffDialog, self).__init__(*args)
 
     def onInit(self):  # pylint: disable=invalid-name
         ''' Perform this when the screensaver is started '''
@@ -226,7 +236,7 @@ class TurnOffDialog(WindowXMLDialog, object):
         # Turn off display
         if self.display.get('name') != 'do-nothing':
             log(1, msg="Turn display signal off using method '{display_method}'", display_method=self.display.get('name'))
-        func(self.display.get('function'), self.display.get('args_off'))
+        func(self.display.get('function'), *self.display.get('args_off'))
 
         # FIXME: Screensaver always seems to lock when started, requires unlock and re-login
         # Log off user
@@ -265,13 +275,13 @@ class TurnOffDialog(WindowXMLDialog, object):
         # Turn on display
         if self.display.get('name') != 'do-nothing':
             log(1, msg="Turn display signal back on using method '{display_method}'", display_method=self.display.get('name'))
-        func(self.display.get('function'), self.display.get('args_on'))
+        func(self.display.get('function'), *self.display.get('args_on'))
 
         # Clean up everything
-        self.exit()
+        self.cleanup()
 
-    @atexit.register
-    def exit(self):
+#    @atexit.register
+    def cleanup(self):
         ''' Clean up function '''
         if hasattr(self, 'monitor'):
             del self.monitor

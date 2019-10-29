@@ -32,7 +32,7 @@ tox:
 
 pylint:
 	@echo -e "$(white)=$(blue) Starting sanity pylint test$(reset)"
-	pylint screensaver.py
+	pylint screensaver.py test/
 
 language:
 	@echo -e "$(white)=$(blue) Checking translations$(reset)"

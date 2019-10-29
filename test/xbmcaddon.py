@@ -3,14 +3,14 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ''' This file implements the Kodi xbmcaddon module, either using stubs or alternative functionality '''
 
-# pylint: disable=invalid-name
+# pylint: disable=bad-option-value,invalid-name,useless-object-inheritance
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from xbmc import getLocalizedString
 from xbmcextra import ADDON_INFO, ADDON_ID, addon_settings
 
 
-class Addon:
+class Addon(object):
     ''' A reimplementation of the xbmcaddon Addon class '''
 
     def __init__(self, id=ADDON_ID):  # pylint: disable=redefined-builtin
