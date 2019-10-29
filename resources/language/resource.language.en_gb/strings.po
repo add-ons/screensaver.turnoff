@@ -86,7 +86,7 @@ msgid "Backlight on Raspberry Pi (kernel)"
 msgstr ""
 
 msgctxt "#33119"
-msgid "HDMI on Raspberry Pi (tvservice)"
+msgid "HDMI on Raspberry Pi (using tvservice)"
 msgstr ""
 
 msgctxt "#33200"
