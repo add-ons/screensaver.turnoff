@@ -1,7 +1,9 @@
 [MESSAGES CONTROL]
 disable=
     fixme,
+    import-outside-toplevel,
     line-too-long,
     missing-docstring,
     too-few-public-methods,
     too-many-function-args,
+    useless-object-inheritance,

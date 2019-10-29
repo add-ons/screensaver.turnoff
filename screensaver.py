@@ -4,7 +4,6 @@
 ''' This Kodi addon turns off display devices when Kodi goes into screensaver-mode '''
 
 from __future__ import absolute_import, division, unicode_literals
-
 import sys
 import atexit
 import subprocess
@@ -95,30 +94,30 @@ def log(level=1, msg='', **kwargs):
     ''' Log info messages to Kodi '''
     if not DEBUG_LOGGING and not (level <= MAX_LOG_LEVEL or MAX_LOG_LEVEL == 0):
         return
+    from string import Formatter
     if kwargs:
-        import string
-        msg = string.Formatter().vformat(msg, (), SafeDict(**kwargs))
+        msg = Formatter().vformat(msg, (), SafeDict(**kwargs))
     msg = '[{addon}] {msg}'.format(addon=ADDON_ID, msg=msg)
     xlog(from_unicode(msg), level % 3 if DEBUG_LOGGING else 2)
 
 
 def log_error(msg, **kwargs):
     ''' Log error messages to Kodi '''
+    from string import Formatter
     if kwargs:
-        import string
-        msg = string.Formatter().vformat(msg, (), SafeDict(**kwargs))
+        msg = Formatter().vformat(msg, (), SafeDict(**kwargs))
     msg = '[{addon}] {msg}'.format(addon=ADDON_ID, msg=msg)
     xlog(from_unicode(msg), 4)
 
 
 def jsonrpc(**kwargs):
     ''' Perform JSONRPC calls '''
-    import json
+    from json import dumps, loads
     if 'id' not in kwargs:
         kwargs.update(id=1)
     if 'jsonrpc' not in kwargs:
         kwargs.update(jsonrpc='2.0')
-    result = json.loads(executeJSONRPC(json.dumps(kwargs)))
+    result = loads(executeJSONRPC(dumps(kwargs)))
     log(3, msg="Sending JSON-RPC payload: '{payload}' returns '{result}'", payload=kwargs, result=result)
     return result
 
@@ -284,7 +283,7 @@ class TurnOffDialog(WindowXMLDialog, object):
 ADDON = Addon()
 ADDON_NAME = to_unicode(ADDON.getAddonInfo('name'))
 ADDON_ID = to_unicode(ADDON.getAddonInfo('id'))
-ADDON_PATH = to_unicode(ADDON.getAddonInfo('path').decode('utf-8'))
+ADDON_PATH = to_unicode(ADDON.getAddonInfo('path'))
 ADDON_ICON = to_unicode(ADDON.getAddonInfo('icon'))
 
 DEBUG_LOGGING = True
