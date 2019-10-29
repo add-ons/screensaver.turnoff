@@ -1,0 +1,20 @@
+# Temporary files
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+nupkg/
+
+# Test caches
+*.pyc
+*.pyo
+.coverage
+.pytest_cache/
+.tox/
+
+# Packages
+*.zip
+
+# Logs
+kodi-addon-checker-report.log
+kodi-addon-checker.log

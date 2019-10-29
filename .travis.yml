@@ -3,14 +3,23 @@ language: python
 python:
 - '2.7'
 - '3.6'
-- 3.7-dev
+- '3.7'
+- '3.8'
 
 sudo: false
 
+env:
+  PYTHONIOENCODING: utf-8
+
 install:
-- pip install tox-travis
-- pip install pylint
+- pip install -r requirements.txt
 
 script:
 - tox
+- tox -e flake8
 - pylint screensaver.py
+- coverage run -m unittest discover
+- coverage run -a screensaver.py
+
+after_success:
+- codecov

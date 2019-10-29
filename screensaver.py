@@ -189,29 +189,26 @@ def func(function, *args):
     return globals()[function](*args)
 
 
-class TurnOffMonitor(Monitor):
+class TurnOffMonitor(Monitor, object):
     ''' This is the monitor to exit TurnOffScreensaver '''
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
         ''' Initialize monitor '''
         self.action = kwargs.get('action')
-        super(TurnOffMonitor, self).__init__(*args, **kwargs)
+        super(TurnOffMonitor, self).__init__()
 
     def onScreensaverDeactivated(self):  # pylint: disable=invalid-name
         ''' Perform cleanup function '''
         self.action()
 
 
-class TurnOffScreensaver(WindowXMLDialog):
+class TurnOffDialog(WindowXMLDialog, object):
     ''' The TurnOffScreensaver class managing the XML gui '''
 
-    def __init__(self, *args, **kwargs):
-        ''' Initialize Screensaver '''
-        self.display = None
-        self.mute = None
-        self.power = None
-        self.monitor = None
-        super(TurnOffScreensaver, self).__init__(*args, **kwargs)
+    display = None
+    monitor = None
+    mute = None
+    power = None
 
     def onInit(self):  # pylint: disable=invalid-name
         ''' Perform this when the screensaver is started '''
@@ -295,5 +292,5 @@ MAX_LOG_LEVEL = 3
 
 if __name__ == '__main__':
     # Do not start screensaver when command fails
-    TurnOffScreensaver('gui.xml', ADDON_PATH, 'default').doModal()
+    TurnOffDialog('gui.xml', ADDON_PATH, 'default').doModal()
     sys.modules.clear()

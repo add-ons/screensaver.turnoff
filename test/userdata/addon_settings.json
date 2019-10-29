@@ -1,0 +1,8 @@
+{
+    "screensaver.turnoff": {
+        "display_method": "0",
+        "power_method": "0",
+        "logoff": "true",
+        "mute": "true"
+    }
+}

@@ -1,4 +1,5 @@
 ENVS := flake8,py27,py36
+export PYTHONPATH := $(CURDIR)/resources/lib:$(CURDIR)/test
 addon_xml := addon.xml
 
 # Collect information to build as sensible package name
@@ -21,7 +22,7 @@ all: zip
 
 package: zip
 
-test: sanity
+test: sanity unit run
 
 sanity: tox pylint
 
@@ -41,6 +42,14 @@ addon: clean
 	@echo -e "$(white)=$(blue) Starting sanity addon tests$(reset)"
 	kodi-addon-checker . --branch=krypton
 	kodi-addon-checker . --branch=leia
+
+unit: clean
+	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
+	python -m unittest discover
+
+run:
+	@echo -e "$(white)=$(blue) Run CLI$(reset)"
+	python screensaver.py
 
 zip: clean
 	@echo -e "$(white)=$(blue) Building new package$(reset)"
