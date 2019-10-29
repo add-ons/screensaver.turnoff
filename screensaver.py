@@ -165,11 +165,7 @@ def activate_window(window='home'):
 def run_builtin(builtin):
     ''' Run Kodi builtins while catching exceptions '''
     log(2, msg="Executing builtin '{builtin}'", builtin=builtin)
-    try:
-        executebuiltin(builtin, True)
-    except Exception as exc:  # pylint: disable=broad-except
-        log_error(msg="Exception executing builtin '{builtin}': {exc}", builtin=builtin, exc=exc)
-        popup(msg="Exception executing builtin '%s': %s" % (builtin, exc))
+    executebuiltin(builtin, True)
 
 
 def run_command(*command, **kwargs):
@@ -188,7 +184,7 @@ def run_command(*command, **kwargs):
                 log_error(msg="Command '{command}' returned on stdout: {stdout} ", command=command[0], stdout=out)
             popup(msg="%s\n%s" % (out, err))
             sys.exit(1)
-    except Exception as exc:  # pylint: disable=broad-except
+    except OSError as exc:
         log_error(msg="Exception running '{command}': {exc}", command=command[0], exc=exc)
         popup(msg="Exception running '%s': %s" % (command[0], exc))
         sys.exit(2)
