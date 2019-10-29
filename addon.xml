@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="screensaver.turnoff" name="Turn Off" version="0.10.0" provider-name="Dag Wieers">
+<addon id="screensaver.turnoff" name="Turn Off" version="0.10.1" provider-name="dagwieers">
+  <requires>
+    <import addon="xbmc.python" version="2.25.0"/>
+  </requires>
+  <extension point="xbmc.ui.screensaver" library="screensaver.py"/>
   <extension point="xbmc.addon.metadata">
     <platform>all</platform>
     <summary lang="en_GB">Screensaver that turns your screen off to save power</summary>
@@ -10,9 +14,7 @@
     <source>http://github.com/dagwieers/screensaver.turnoff</source>
     <forum>https://forum.kodi.tv/showthread.php?tid=331076</forum>
     <assets>
-      <icon>icon.png</icon>
+      <icon>resources/media/icon.png</icon>
     </assets>
   </extension>
-  <extension point="xbmc.ui.screensaver" library="screensaver.py"/>
-  <requires><import addon="xbmc.python" version="2.25.0"/></requires>
 </addon>

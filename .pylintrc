@@ -1,9 +1,7 @@
 [MESSAGES CONTROL]
 disable=
-    broad-except,
     fixme,
     import-error,
-    invalid-name,
     line-too-long,
+    missing-docstring,
     too-few-public-methods,
-    unused-argument,

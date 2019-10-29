@@ -1,22 +1,17 @@
 # -*- coding: utf-8 -*-
-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
+''' This Kodi addon turns off display devices when Kodi goes into screensaver-mode '''
 
-'''
-This Kodi addon turns off display devices when Kodi goes into screensaver-mode.
-'''
+from __future__ import absolute_import, division, unicode_literals
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-__metaclass__ = type
-
+import sys
 import atexit
 import subprocess
-import sys
 
-import xbmc
-import xbmcaddon
-import xbmcgui
+from xbmc import executebuiltin, executeJSONRPC, log as xlog, Monitor
+from xbmcaddon import Addon
+from xbmcgui import Dialog, WindowXMLDialog
 
 # NOTE: The below order relates to resources/settings.xml
 DISPLAY_METHODS = [
@@ -53,65 +48,118 @@ DISPLAY_METHODS = [
          function='run_command',
          args_off=['su', '-c', 'echo 1 >/sys/class/backlight/rpi_backlight/bl_power'],
          args_on=['su', '-c', 'echo 0 >/sys/class/backlight/rpi_backlight/bl_power']),
+    dict(name='tvservice-rpi', title='HDMI on Raspberry Pi (tvservice)',
+         function='run_command',
+         args_off=['tvservice', '-o'],
+         args_on=['tvservice', '-p']),
 ]
 
 POWER_METHODS = [
     dict(name='do-nothing', title='Do nothing',
-         function='log_info', args_off='Do nothing to power off system'),
+         function='log', args=[1, 'Do nothing to power off system']),
     dict(name='suspend-builtin', title='Suspend (built-in)',
-         function='run_builtin', args_off='Suspend'),
+         function='jsonrpc', kwargs=dict(method='System.Suspend')),
     dict(name='hibernate-builtin', title='Hibernate (built-in)',
-         function='run_builtin', args_off='Hibernate'),
+         function='jsonrpc', kwargs=dict(method='System.Hibernate')),
     dict(name='quit-builtin', title='Quit (built-in)',
-         function='run_builtin', args_off='Quit'),
+         function='jsonrpc', kwargs=dict(method='Application.Quit')),
     dict(name='shutdown-builtin', title='ShutDown action (built-in)',
-         function='run_builtin', args_off='ShutDown'),
+         function='jsonrpc', kwargs=dict(method='System.Shutdown')),
     dict(name='reboot-builtin', title='Reboot (built-in)',
-         function='run_builtin', args_off='Reboot'),
+         function='jsonrpc', kwargs=dict(method='System.Reboot')),
     dict(name='powerdown-builtin', title='Powerdown (built-in)',
-         function='run_builtin', args_off='Powerdown'),
+         function='jsonrpc', kwargs=dict(method='System.Powerdown')),
 ]
 
 
-def log_error(msg='', level=xbmc.LOGERROR):
-    ''' Log error messages to Kodi '''
-    xbmc.log(msg='[%s] %s' % (addon_id, msg), level=level)
+class SafeDict(dict):
+    ''' A safe dictionary implementation that does not break down on missing keys '''
+    def __missing__(self, key):
+        ''' Replace missing keys with the original placeholder '''
+        return '{' + key + '}'
 
 
-def log_info(msg='', level=xbmc.LOGINFO):
+def from_unicode(text, encoding='utf-8'):
+    ''' Force unicode to text '''
+    if sys.version_info.major == 2 and isinstance(text, unicode):  # noqa: F821; pylint: disable=undefined-variable
+        return text.encode(encoding)
+    return text
+
+
+def to_unicode(text, encoding='utf-8'):
+    ''' Force text to unicode '''
+    return text.decode(encoding) if isinstance(text, bytes) else text
+
+
+def log(level=1, msg='', **kwargs):
     ''' Log info messages to Kodi '''
-    xbmc.log(msg='[%s] %s' % (addon_id, msg), level=level)
+    if not DEBUG_LOGGING and not (level <= MAX_LOG_LEVEL or MAX_LOG_LEVEL == 0):
+        return
+    if kwargs:
+        import string
+        msg = string.Formatter().vformat(msg, (), SafeDict(**kwargs))
+    msg = '[{addon}] {msg}'.format(addon=ADDON_ID, msg=msg)
+    xlog(from_unicode(msg), level % 3 if DEBUG_LOGGING else 2)
 
 
-def log_notice(msg='', level=xbmc.LOGNOTICE):
-    ''' Log notices to Kodi '''
-    xbmc.log(msg='[%s] %s' % (addon_id, msg), level=level)
+def log_error(msg, **kwargs):
+    ''' Log error messages to Kodi '''
+    if kwargs:
+        import string
+        msg = string.Formatter().vformat(msg, (), SafeDict(**kwargs))
+    msg = '[{addon}] {msg}'.format(addon=ADDON_ID, msg=msg)
+    xlog(from_unicode(msg), 4)
+
+
+def jsonrpc(**kwargs):
+    ''' Perform JSONRPC calls '''
+    import json
+    if 'id' not in kwargs:
+        kwargs.update(id=1)
+    if 'jsonrpc' not in kwargs:
+        kwargs.update(jsonrpc='2.0')
+    result = json.loads(executeJSONRPC(json.dumps(kwargs)))
+    log(3, msg="Sending JSON-RPC payload: '{payload}' returns '{result}'", payload=kwargs, result=result)
+    return result
 
 
 def popup(heading='', msg='', delay=10000, icon=''):
     ''' Bring up a pop-up with a meaningful error '''
     if not heading:
-        heading = 'Addon %s failed' % addon_id
+        heading = 'Addon {addon} failed'.format(addon=ADDON_ID)
     if not icon:
-        icon = addon_icon
-    xbmcgui.Dialog().notification(heading, msg, icon, delay)
+        icon = ADDON_ICON
+    Dialog().notification(heading, msg, icon, delay)
 
 
 def set_mute(toggle=True):
     ''' Set mute using Kodi JSON-RPC interface '''
-    payload = '{"jsonrpc": "2.0", "method": "Application.SetMute", "params": {"mute": %s}}' % ('true' if toggle else 'false')
-    result = xbmc.executeJSONRPC(payload)
-    log_info(msg="Sending JSON-RPC payload: '%s' returns '%s'" % (payload, result))
+    toggle = 'true' if toggle else 'false'
+    result = jsonrpc(method='Application.SetMute', params=dict(mute=toggle))
+#    if '"result":'+toggle not in result:
+#        log_error(msg="Error in JSON-RPC: '{payload}' returns '{result}'", payload=payload, result=result)
+#        popup(msg="Error in JSON-RPC Application.SetMute: '%s'" % result)
+    return result
+
+
+def activate_window(window='home'):
+    ''' Set mute using Kodi JSON-RPC interface '''
+#    result = jsonrpc(method='GUI.ActivateWindow', params=dict(window=window, parameters=['Home']))
+    result = jsonrpc(method='GUI.ActivateWindow', params=dict(window=window, parameters=[]))
+#    if '"result":"OK"' not in result:
+#        log_error(msg="Error in JSON-RPC: '{payload}' returns '{result}'", payload=payload, result=result)
+#        popup(msg="Error in JSON-RPC GUI.ActivateWindow: '%s'" % result)
+    return result
 
 
 def run_builtin(builtin):
     ''' Run Kodi builtins while catching exceptions '''
-    log_info(msg="Executing builtin '%s'" % builtin)
+    log(2, msg="Executing builtin '{builtin}'", builtin=builtin)
     try:
-        xbmc.executebuiltin(builtin)
-    except Exception as e:
-        log_error(msg="Exception executing builtin '%s': %s" % (builtin, e))
-        popup(msg="Exception executing builtin '%s': %s" % (builtin, e))
+        executebuiltin(builtin, True)
+    except Exception as exc:  # pylint: disable=broad-except
+        log_error(msg="Exception executing builtin '{builtin}': {exc}", builtin=builtin, exc=exc)
+        popup(msg="Exception executing builtin '%s': %s" % (builtin, exc))
 
 
 def run_command(command, shell=False):
@@ -121,18 +169,18 @@ def run_command(command, shell=False):
         cmd = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=shell)
         (out, err) = cmd.communicate()
         if cmd.returncode == 0:
-            log_notice(msg="Running command '%s' returned rc=%s" % (' '.join(command), cmd.returncode))
+            log(2, msg="Running command '{command}' returned rc={rc}", command=' '.join(command), rc=cmd.returncode)
         else:
-            log_error(msg="Running command '%s' failed with rc=%s" % (' '.join(command), cmd.returncode))
+            log_error(msg="Running command '{command}' failed with rc={rc}", command=' '.join(command), rc=cmd.returncode)
             if err:
-                log_error(msg="Command '%s' returned on stderr: %s" % (command[0], err))
+                log_error(msg="Command '{command}' returned on stderr: {stderr}", command=command[0], stderr=err)
             if out:
-                log_error(msg="Command '%s' returned on stdout: %s " % (command[0], out))
+                log_error(msg="Command '{command}' returned on stdout: {stdout} ", command=command[0], stdout=out)
             popup(msg="%s\n%s" % (out, err))
             sys.exit(1)
-    except Exception as e:
-        log_error(msg="Exception running '%s': %s" % (command[0], e))
-        popup(msg="Exception running '%s': %s" % (command[0], e))
+    except Exception as exc:  # pylint: disable=broad-except
+        log_error(msg="Exception running '{command}': {exc}", command=command[0], exc=exc)
+        popup(msg="Exception running '%s': %s" % (command[0], exc))
         sys.exit(2)
 
 
@@ -141,19 +189,20 @@ def func(function, *args):
     return globals()[function](*args)
 
 
-class TurnOffMonitor(xbmc.Monitor):
+class TurnOffMonitor(Monitor):
     ''' This is the monitor to exit TurnOffScreensaver '''
 
     def __init__(self, *args, **kwargs):
         ''' Initialize monitor '''
-        self.action = kwargs['action']
+        self.action = kwargs.get('action')
+        super(TurnOffMonitor, self).__init__(*args, **kwargs)
 
-    def onScreensaverDeactivated(self):
+    def onScreensaverDeactivated(self):  # pylint: disable=invalid-name
         ''' Perform cleanup function '''
         self.action()
 
 
-class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
+class TurnOffScreensaver(WindowXMLDialog):
     ''' The TurnOffScreensaver class managing the XML gui '''
 
     def __init__(self, *args, **kwargs):
@@ -161,38 +210,40 @@ class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
         self.display = None
         self.mute = None
         self.power = None
-
         self.monitor = None
+        super(TurnOffScreensaver, self).__init__(*args, **kwargs)
 
-    def onInit(self):
+    def onInit(self):  # pylint: disable=invalid-name
         ''' Perform this when the screensaver is started '''
-        display_method = int(addon.getSetting('display_method'))
-        power_method = int(addon.getSetting('power_method'))
+        display_method = int(ADDON.getSetting('display_method'))
+        power_method = int(ADDON.getSetting('power_method'))
 
         self.display = DISPLAY_METHODS[display_method]
-        self.mute = addon.getSetting('mute')
+        self.mute = to_unicode(ADDON.getSetting('mute'))
         self.power = POWER_METHODS[power_method]
 
-        logoff = addon.getSetting('logoff')
+        logoff = to_unicode(ADDON.getSetting('logoff'))
 
-        log_notice(msg='display_method=%s, power_method=%s, logoff=%s, mute=%s' % (self.display['name'], self.power['name'], logoff, self.mute))
-
+        log(2, msg='display_method={display_method}, power_method={power_method}, logoff={logoff}, mute={mute}',
+            display_method=self.display.get('name'), power_method=self.power.get('name'),
+            logoff=logoff, mute=self.mute)
         # Turn off display
-        if self.display['name'] != 'do-nothing':
-            log_notice(msg="Turn display signal off using method '%s'" % self.display['name'])
-        func(self.display['function'], self.display['args_off'])
+        if self.display.get('name') != 'do-nothing':
+            log(1, msg="Turn display signal off using method '{display_method}'", display_method=self.display.get('name'))
+        func(self.display.get('function'), self.display.get('args_off'))
 
         # FIXME: Screensaver always seems to lock when started, requires unlock and re-login
         # Log off user
         if logoff == 'true':
-            log_notice(msg='Log off user')
-            run_builtin('System.Logoff()')
-            #run_builtin('ActivateWindow(loginscreen)')
-            #run_builtin('ActivateWindowAndFocus(loginscreen,return)')
+            log(1, msg='Log off user')
+            activate_window('loginscreen')
+#            run_builtin('System.LogOff')
+#            run_builtin('ActivateWindow(loginscreen)')
+#            run_builtin('ActivateWindowAndFocus(loginscreen,return)')
 
         # Mute audio
         if self.mute == 'true':
-            log_notice(msg='Mute audio')
+            log(1, msg='Mute audio')
             set_mute(True)
             # NOTE: Since the Mute-builtin is a toggle, we need to do this to ensure Mute
 #            run_builtin('VolumeDown')
@@ -201,26 +252,26 @@ class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
         self.monitor = TurnOffMonitor(action=self.resume)
 
         # Power off system
-        if self.power['name'] != 'do-nothing':
-            log_notice(msg="Turn system off using method '%s'" % self.power['name'])
-        func(self.power['function'], self.power['args_off'])
+        if self.power.get('name') != 'do-nothing':
+            log(1, msg="Turn system off using method '{power_method}'", power_method=self.power.get('name'))
+        func(self.power.get('function'), *self.power.get('args', []), **self.power.get('kwargs', {}))
 
     def resume(self):
         ''' Perform this when the Screensaver is stopped '''
         # Unmute audio
         if self.mute == 'true':
-            log_notice(msg='Unmute audio')
+            log(1, msg='Unmute audio')
             set_mute(False)
 #            run_builtin('Mute')
             # NOTE: Since the Mute-builtin is a toggle, we need to do this to ensure Unmute
 #            run_builtin('VolumeUp')
 
         # Turn on display
-        if self.display['name'] != 'do-nothing':
-            log_notice(msg="Turn display signal back on using method '%s'" % self.display['name'])
-        func(self.display['function'], self.display['args_on'])
+        if self.display.get('name') != 'do-nothing':
+            log(1, msg="Turn display signal back on using method '{display_method}'", display_method=self.display.get('name'))
+        func(self.display.get('function'), self.display.get('args_on'))
 
-        # Destroy everything
+        # Clean up everything
         self.exit()
 
     @atexit.register
@@ -228,20 +279,21 @@ class TurnOffScreensaver(xbmcgui.WindowXMLDialog):
         ''' Clean up function '''
         if hasattr(self, 'monitor'):
             del self.monitor
+
         self.close()
         del self
 
 
+ADDON = Addon()
+ADDON_NAME = to_unicode(ADDON.getAddonInfo('name'))
+ADDON_ID = to_unicode(ADDON.getAddonInfo('id'))
+ADDON_PATH = to_unicode(ADDON.getAddonInfo('path').decode('utf-8'))
+ADDON_ICON = to_unicode(ADDON.getAddonInfo('icon'))
+
+DEBUG_LOGGING = True
+MAX_LOG_LEVEL = 3
+
 if __name__ == '__main__':
-    addon = xbmcaddon.Addon()
-
-    addon_name = addon.getAddonInfo('name')
-    addon_id = addon.getAddonInfo('id')
-    addon_path = addon.getAddonInfo('path').decode('utf-8')
-    addon_icon = addon.getAddonInfo('icon')
-
     # Do not start screensaver when command fails
-    screensaver = TurnOffScreensaver('gui.xml', addon_path, 'default')
-    screensaver.doModal()
-    del screensaver
+    TurnOffScreensaver('gui.xml', ADDON_PATH, 'default').doModal()
     sys.modules.clear()
