@@ -28,6 +28,6 @@
     <!-- setting type="action" label="33412" action="ActivateScreensaver"/ --> <!-- activate -->
   <!-- /category -->
         <setting label="33420" type="lsep"/> <!-- Logging -->
-        <setting label="33421" help="33422" type="enum" id="max_log_level" lvalues="33430|33431|33432|33433" default="0"/>
+        <setting label="33421" help="33422" type="enum" id="max_log_level" lvalues="33430|33431|33432|33433" default="1"/>
     </category>
 </settings>

@@ -101,7 +101,7 @@ def to_unicode(text, encoding='utf-8'):
 def log(level=1, msg='', **kwargs):
     ''' Log info messages to Kodi '''
     max_log_level = int(get_setting('max_log_level', 0))
-    if not DEBUG_LOGGING and not (level <= max_log_level or max_log_level == 0):
+    if not DEBUG_LOGGING and not (level <= max_log_level and max_log_level != 0):
         return
     from string import Formatter
     if kwargs:
@@ -175,7 +175,7 @@ def run_command(*command, **kwargs):
     ''' Run commands on the OS while catching exceptions '''
     # TODO: Add options for running using su or sudo
     try:
-        cmd = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, **kwargs)
+        cmd = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False, **kwargs)
         (out, err) = cmd.communicate()
         if cmd.returncode == 0:
             log(2, msg="Running command '{command}' returned rc={rc}", command=' '.join(command), rc=cmd.returncode)
@@ -271,7 +271,7 @@ class TurnOffDialog(WindowXMLDialog, object):
             del self.monitor
 
         self.close()
-        del self
+#        del self
 
 
 class TurnOffMonitor(Monitor, object):
