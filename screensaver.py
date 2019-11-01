@@ -8,7 +8,7 @@ import sys
 import atexit
 import subprocess
 
-from xbmc import executebuiltin, executeJSONRPC, getCondVisibility, log as xlog, Monitor, sleep
+from xbmc import executebuiltin, executeJSONRPC, getCondVisibility, log as xlog, Monitor
 from xbmcaddon import Addon
 from xbmcgui import Dialog, WindowXMLDialog
 
@@ -268,6 +268,7 @@ class TurnOffDialog(WindowXMLDialog, object):
 
     def exit(self):
         ''' Clean up function '''
+        self.monitor = None
         self.close()
 
 
@@ -291,11 +292,7 @@ def run():
         log(1, msg='Screensaver not started because player has media.')
         return
 
-    screensaver = TurnOffDialog('gui.xml', ADDON_PATH, 'default')
-    screensaver.doModal()
-    sleep(100)
-    del screensaver
-    sys.modules.clear()
+    TurnOffDialog('gui.xml', ADDON_PATH, 'default').doModal()
 
 
 ADDON = Addon()
