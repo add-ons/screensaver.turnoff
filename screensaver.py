@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
+# Copyright: (c) 2018, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 ''' This Kodi addon turns off display devices when Kodi goes into screensaver-mode '''
 
@@ -8,7 +8,7 @@ import sys
 import atexit
 import subprocess
 
-from xbmc import executebuiltin, executeJSONRPC, log as xlog, Monitor
+from xbmc import executebuiltin, executeJSONRPC, getCondVisibility, log as xlog, Monitor, sleep
 from xbmcaddon import Addon
 from xbmcgui import Dialog, WindowXMLDialog
 
@@ -244,6 +244,7 @@ class TurnOffDialog(WindowXMLDialog, object):
             set_mute(toggle=True)
 
         self.monitor = TurnOffMonitor(action=self.resume)
+        self.monitor.waitForAbort(1)
 
         # Power off system
         if self.power.get('name') != 'do-nothing':
@@ -267,11 +268,7 @@ class TurnOffDialog(WindowXMLDialog, object):
 
     def exit(self):
         ''' Clean up function '''
-        if hasattr(self, 'monitor'):
-            del self.monitor
-
         self.close()
-#        del self
 
 
 class TurnOffMonitor(Monitor, object):
@@ -286,6 +283,21 @@ class TurnOffMonitor(Monitor, object):
         self.action()
 
 
+def run():
+    ''' Runs the screensaver '''
+
+    # If player has media, avoid running
+    if getCondVisibility("Player.HasMedia"):
+        log(1, msg='Screensaver not started because player has media.')
+        return
+
+    screensaver = TurnOffDialog('gui.xml', ADDON_PATH, 'default')
+    screensaver.doModal()
+    sleep(100)
+    del screensaver
+    sys.modules.clear()
+
+
 ADDON = Addon()
 ADDON_NAME = to_unicode(ADDON.getAddonInfo('name'))
 ADDON_ID = to_unicode(ADDON.getAddonInfo('id'))
@@ -293,8 +305,3 @@ ADDON_PATH = to_unicode(ADDON.getAddonInfo('path'))
 ADDON_ICON = to_unicode(ADDON.getAddonInfo('icon'))
 
 DEBUG_LOGGING = get_global_setting('debug.showloginfo')
-
-if __name__ == '__main__':
-    # Do not start screensaver when command fails
-    TurnOffDialog('gui.xml', ADDON_PATH, 'default').doModal()
-    sys.modules.clear()
