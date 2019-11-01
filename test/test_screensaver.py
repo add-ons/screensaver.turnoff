@@ -18,7 +18,8 @@ class TestScreensaver(unittest.TestCase):
 
     @staticmethod
     def test_screensaver_log():
-        ''' Test enabling screensaver '''
+        ''' Test screensaver logging '''
+        screensaver.ADDON.settings['max_log_level'] = '0'
         screensaver.ADDON.settings['display_method'] = '0'
         screensaver.ADDON.settings['power_method'] = '0'
         turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.ADDON_PATH, 'default')
@@ -28,7 +29,7 @@ class TestScreensaver(unittest.TestCase):
 
     @staticmethod
     def test_screensaver_builtin():
-        ''' Test enabling screensaver '''
+        ''' Test screensaver built-ins '''
         screensaver.ADDON.settings['display_method'] = '1'
         screensaver.ADDON.settings['power_method'] = '1'
         turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.ADDON_PATH, 'default')
@@ -36,10 +37,24 @@ class TestScreensaver(unittest.TestCase):
         time.sleep(2)
         turnoff.resume()
 
-    def test_screensaver_command(self):
+    def test_screensaver_missing_command(self):
         ''' Test enabling screensaver '''
         screensaver.ADDON.settings['display_method'] = '2'
         screensaver.ADDON.settings['power_method'] = '2'
+        turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.ADDON_PATH, 'default')
+        with self.assertRaises(SystemExit) as init:
+            turnoff.onInit()  # No such file or directory
+        self.assertEqual(init.exception.code, 2)
+        time.sleep(2)
+        with self.assertRaises(SystemExit) as resume:
+            turnoff.resume()  # No such file or directory
+        self.assertEqual(resume.exception.code, 2)
+
+    @unittest.skip('This requires su privileges')
+    def test_screensaver_failed_command(self):
+        ''' Test screensaver failed command '''
+        screensaver.ADDON.settings['display_method'] = '7'
+        screensaver.ADDON.settings['power_method'] = '3'
         turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.ADDON_PATH, 'default')
         with self.assertRaises(SystemExit) as init:
             turnoff.onInit()  # We cannot find the binary
