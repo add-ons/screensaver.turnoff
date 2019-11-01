@@ -3,7 +3,7 @@
   <requires>
     <import addon="xbmc.python" version="2.25.0"/>
   </requires>
-  <extension point="xbmc.ui.screensaver" library="screensaver.py"/>
+  <extension point="xbmc.ui.screensaver" library="default.py"/>
   <extension point="xbmc.addon.metadata">
     <platform>all</platform>
     <summary lang="en_GB">Screensaver that turns your display off to save power</summary>
