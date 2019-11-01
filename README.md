@@ -1,7 +1,7 @@
 [![GitHub release](https://img.shields.io/github/release/dagwieers/screensaver.turnoff.svg)](https://github.com/dagwieers/screensaver.turnoff/releases)
 [![Build Status](https://travis-ci.org/dagwieers/screensaver.turnoff.svg?branch=master)](https://travis-ci.org/dagwieers/screensaver.turnoff)
 [![Codecov status](https://img.shields.io/codecov/c/github/dagwieers/screensaver.turnoff/master)](https://codecov.io/gh/dagwieers/screensaver.turnoff/branch/master)
-[![License: GPLv3](https://img.shields.io/badge/License-GPLv3-yellow.svg)](https://opensource.org/licenses/GPL-3.0)
+[![License: GPLv2](https://img.shields.io/badge/License-GPLv2-yellow.svg)](https://opensource.org/licenses/GPL-2.0)
 [![Contributors](https://img.shields.io/github/contributors/dagwieers/screensaver.turnoff.svg)](https://github.com/dagwieers/screensaver.turnoff/graphs/contributors)
 
 # Kodi screensaver that turns your screen off to save power
