@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="screensaver.turnoff" name="Turn Off" version="0.10.1" provider-name="dagwieers">
+<addon id="screensaver.turnoff" name="Turn Off" version="0.10.2" provider-name="dagwieers">
   <requires>
     <import addon="xbmc.python" version="2.25.0"/>
   </requires>
@@ -10,7 +10,7 @@
     <description lang="en_GB">
 The Turn Off screensaver turns your TV, projector or screen off, like any old fashioned screensaver is intended to do.
 
-Next to managing your display, it can also manage your device, log your profile off or mute audio to avoid sounds through your A/V receiver.
+Next to managing your display, it can also manage your device power state, log your profile off or mute audio to avoid sounds through your A/V receiver.
     </description>
     <license>GNU General Public License, v2+</license>
     <email>dag@wieers.com</email>
@@ -18,6 +18,11 @@ Next to managing your display, it can also manage your device, log your profile 
     <source>https://github.com/dagwieers/screensaver.turnoff</source>
     <forum>https://forum.kodi.tv/showthread.php?tid=331076</forum>
     <news>
+v0.10.2 (2019-11-21)
+- Create separate entrypoint
+- Improve stability
+- Add more unit tests
+
 v0.10.1 (2019-10-30)
 - Add sanity tests, unit tests and coverage support
 - Use JSON-RPC for all built-ins

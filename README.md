@@ -11,7 +11,7 @@ This Kodi screensaver turns your TV, projector or monitor off, so it can actuall
 
 ## How does it work ?
 
-It supports the following methods:
+It supports the following display methods:
 
 - **CEC (built-in)**
   - The screensaver forces the display to go into Standby using internal CEC controls.
@@ -37,15 +37,22 @@ It supports the following methods:
 - **Backlight on Raspberry Pi (kernel)**
   - The screensaver turns off the backlight of the display. This only works on Raspberry Pi.
 
-- **HDMI on Raspberry Pi (tvservice)**
-  - The screensaver turns off the HDMI output using the 'tvservice' utility. This only works on Raspberry Pi, or possible other similar Broadcom chipsets.
+- **Backlight on Odroid C2 (kernel)**
+  - The screensaver turns off the backlight of the display. This only works on Odroid C2.
 
 
-Optionally it also can put your system to sleep or power it off.
+Optionally it also can put your system to sleep or power it off using one of the following methods:
+
+- **Suspend (built-in)**
+- **Hibernate (built-in)**
+- **Quit (built-in)**
+- **Shutdown (built-in)**
+- **Reboot (built-in)**
+- **Powerdown (built-in)**
 
 Or log off your user or mute audio.
 
-One can press the `HOME` key to deactivate the screensaver, depending on the method used and the state of the display it may turn your display back on.
+One can press the `HOME` key to deactivate the screensaver, depending on the method used and the state of the display/system it may turn your display and system back on.
 
 
 ## Related
@@ -59,6 +66,11 @@ You can report issues at [our GitHub project](https://github.com/dagwieers/scree
 
 
 ## Releases
+### v0.10.2 (2019-11-21)
+- Create separate entrypoint
+- Improve stability
+- Add more unit tests
+
 ### v0.10.1 (2019-10-30)
 - Add sanity tests, unit tests and coverage support
 - Use JSON-RPC for all built-ins
