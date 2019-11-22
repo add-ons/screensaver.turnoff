@@ -118,7 +118,10 @@ def addon_settings(addon_id=None):
 
 def import_language(language):
     ''' Process the language.po file '''
-    return polib.pofile('resources/language/{language}/strings.po'.format(language=language))
+    try:
+        return polib.pofile('resources/language/{language}/strings.po'.format(language=language))
+    except IOError:
+        return polib.pofile('resources/language/resource.language.en_gb/strings.po')
 
 
 ADDON_INFO = read_addon_xml('addon.xml')

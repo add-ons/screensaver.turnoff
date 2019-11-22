@@ -13,16 +13,18 @@ xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
 xbmcgui = __import__('xbmcgui')
 
+addon = xbmcaddon.Addon()
+
 
 class TestScreensaver(unittest.TestCase):
 
     @staticmethod
     def test_screensaver_log():
         ''' Test screensaver logging '''
-        screensaver.ADDON.settings['max_log_level'] = '0'
-        screensaver.ADDON.settings['display_method'] = '0'
-        screensaver.ADDON.settings['power_method'] = '0'
-        turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.ADDON_PATH, 'default')
+        addon.settings['max_log_level'] = '0'
+        addon.settings['display_method'] = '0'
+        addon.settings['power_method'] = '0'
+        turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.addon_path(), 'default')
         turnoff.onInit()
         time.sleep(2)
         turnoff.resume()
@@ -30,18 +32,18 @@ class TestScreensaver(unittest.TestCase):
     @staticmethod
     def test_screensaver_builtin():
         ''' Test screensaver built-ins '''
-        screensaver.ADDON.settings['display_method'] = '1'
-        screensaver.ADDON.settings['power_method'] = '1'
-        turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.ADDON_PATH, 'default')
+        addon.settings['display_method'] = '1'
+        addon.settings['power_method'] = '1'
+        turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.addon_path(), 'default')
         turnoff.onInit()
         time.sleep(2)
         turnoff.resume()
 
     def test_screensaver_missing_command(self):
         ''' Test enabling screensaver '''
-        screensaver.ADDON.settings['display_method'] = '2'
-        screensaver.ADDON.settings['power_method'] = '2'
-        turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.ADDON_PATH, 'default')
+        addon.settings['display_method'] = '2'
+        addon.settings['power_method'] = '2'
+        turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.addon_path(), 'default')
         with self.assertRaises(SystemExit) as init:
             turnoff.onInit()  # No such file or directory
         self.assertEqual(init.exception.code, 2)
@@ -53,9 +55,9 @@ class TestScreensaver(unittest.TestCase):
     @unittest.skip('This requires su privileges')
     def test_screensaver_failed_command(self):
         ''' Test screensaver failed command '''
-        screensaver.ADDON.settings['display_method'] = '7'
-        screensaver.ADDON.settings['power_method'] = '3'
-        turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.ADDON_PATH, 'default')
+        addon.settings['display_method'] = '7'
+        addon.settings['power_method'] = '3'
+        turnoff = screensaver.TurnOffDialog('gui.xml', screensaver.addon_path(), 'default')
         with self.assertRaises(SystemExit) as init:
             turnoff.onInit()  # We cannot find the binary
         self.assertEqual(init.exception.code, 2)
