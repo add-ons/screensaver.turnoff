@@ -66,6 +66,9 @@ You can report issues at [our GitHub project](https://github.com/add-ons/screens
 
 
 ## Releases
+### v0.10.3 (2020-08-01)
+- Workflow changes for Matrix
+
 ### v0.10.2 (2019-11-21)
 - Create separate entrypoint
 - Improve stability
