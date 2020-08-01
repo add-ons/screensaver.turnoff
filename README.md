@@ -1,5 +1,5 @@
 [![GitHub release](https://img.shields.io/github/release/add-ons/screensaver.turnoff.svg)](https://github.com/add-ons/screensaver.turnoff/releases)
-[![Build Status](https://travis-ci.org/add-ons/screensaver.turnoff.svg?branch=master)](https://travis-ci.org/add-ons/screensaver.turnoff)
+[![Build status](https://github.com/add-ons/screensaver.turnoff/workflows/CI/badge.svg)](https://github.com/add-ons/screensover.turnoff/actions)
 [![Codecov status](https://img.shields.io/codecov/c/github/add-ons/screensaver.turnoff/master)](https://codecov.io/gh/add-ons/screensaver.turnoff/branch/master)
 [![License: GPLv2](https://img.shields.io/badge/License-GPLv2-yellow.svg)](https://opensource.org/licenses/GPL-2.0)
 [![Contributors](https://img.shields.io/github/contributors/add-ons/screensaver.turnoff.svg)](https://github.com/add-ons/screensaver.turnoff/graphs/contributors)
