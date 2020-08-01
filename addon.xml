@@ -12,7 +12,7 @@ The Turn Off screensaver turns your TV, projector or screen off, like any old fa
 
 Next to managing your display, it can also manage your device power state, log your profile off or mute audio to avoid sounds through your A/V receiver.
     </description>
-    <license>GNU General Public License, v2+</license>
+    <license>GPL-2.0-or-later</license>
     <email>dag@wieers.com</email>
     <website>https://kodi.wiki/view/Add-on:Turn_Off</website>
     <source>https://github.com/dagwieers/screensaver.turnoff</source>

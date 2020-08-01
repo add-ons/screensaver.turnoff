@@ -6,11 +6,13 @@ project.lock.json
 nupkg/
 
 # Test caches
-*.pyc
-*.pyo
+*.py[cod]
 .coverage
 .pytest_cache/
 .tox/
+
+# Profile data
+*.bin
 
 # Packages
 *.zip
