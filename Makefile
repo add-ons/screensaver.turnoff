@@ -13,10 +13,6 @@ ifdef release
 else
 	zip_name = $(name)-$(version)-$(git_branch)-$(git_hash).zip
 endif
-
-include_files = addon.xml default.py LICENSE README.md resources/ screensaver.py
-include_paths = $(patsubst %,$(name)/%,$(include_files))
-exclude_files = \*.new \*.orig \*.pyc \*.pyo
 zip_dir = $(name)/
 
 languages = $(filter-out en_gb, $(patsubst resources/language/resource.language.%, %, $(wildcard resources/language/*)))
@@ -32,21 +28,21 @@ test: check test-unit test-service test-run
 check: check-tox check-pylint check-translations
 
 check-tox:
-	@echo -e "$(white)=$(blue) Starting sanity tox test$(reset)"
+	@printf "$(white)=$(blue) Starting sanity tox test$(reset)\n"
 	$(PYTHON) -m tox -q
 
 check-pylint:
-	@echo -e "$(white)=$(blue) Starting sanity pylint test$(reset)"
+	@printf "$(white)=$(blue) Starting sanity pylint test$(reset)\n"
 	$(PYTHON) -m pylint default.py screensaver.py tests/
 
 check-translations:
-	@echo -e "$(white)=$(blue) Starting language test$(reset)"
+	@printf "$(white)=$(blue) Starting language test$(reset)\n"
 	@-$(foreach lang,$(languages), \
 		msgcmp resources/language/resource.language.$(lang)/strings.po resources/language/resource.language.en_gb/strings.po; \
 	)
 
 check-addon: clean
-	@echo -e "$(white)=$(blue) Starting sanity addon tests$(reset)"
+	@printf "$(white)=$(blue) Starting sanity addon tests$(reset)\n"
 	kodi-addon-checker . --branch=krypton
 	kodi-addon-checker . --branch=leia
 
@@ -54,31 +50,30 @@ unit: test-unit
 run: test-run
 
 test-unit: clean
-	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
+	@printf "$(white)=$(blue) Starting unit tests$(reset)\n"
 	python -m unittest discover
 
 test-run:
-	@echo -e "$(white)=$(blue) Run CLI$(reset)"
+	@printf "$(white)=$(blue) Run CLI$(reset)\n"
 	python screensaver.py
 
 build: clean
-	@echo -e "$(white)=$(blue) Building new package$(reset)"
+	@printf "$(white)=$(blue) Building new package$(reset)\n"
 	@rm -f ../$(zip_name)
-	cd ..; zip -r $(zip_name) $(include_paths) -x $(exclude_files)
-	@echo -e "$(white)=$(blue) Successfully wrote package as: $(white)../$(zip_name)$(reset)"
+	@git archive --format zip --worktree-attributes -v -o ../$(zip_name) --prefix $(zip_dir) $(or $(shell git stash create), HEAD)
+	@printf "$(white)=$(blue) Successfully wrote package as: $(white)../$(zip_name)$(reset)\n"
 
 multizip: clean
 	@-$(foreach abi,$(KODI_PYTHON_ABIS), \
-		echo "cd /addon/requires/import[@addon='xbmc.python']/@version\nset $(abi)\nsave\nbye" | xmllint --shell addon.xml; \
+		printf "cd /addon/requires/import[@addon='xbmc.python']/@version\nset $(abi)\nsave\nbye\n" | xmllint --shell addon.xml; \
 		matrix=$(findstring $(abi), $(word 1,$(KODI_PYTHON_ABIS))); \
 		if [ $$matrix ]; then version=$(version)+matrix.1; else version=$(version); fi; \
-		echo "cd /addon/@version\nset $$version\nsave\nbye" | xmllint --shell addon.xml; \
+		printf "cd /addon/@version\nset $$version\nsave\nbye\n" | xmllint --shell addon.xml; \
 		make build; \
 	)
 
-
 clean:
-	@echo -e "$(white)=$(blue) Cleaning up$(reset)"
+	@printf "$(white)=$(blue) Cleaning up$(reset)\n"
 	find . -name '*.py[cod]' -type f -delete
 	find . -name '__pycache__' -type d -delete
 	rm -rf .pytest_cache/ .tox/

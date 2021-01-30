@@ -3,6 +3,7 @@ disable=
     fixme,
     import-outside-toplevel,
     line-too-long,
+    super-with-arguments,
     too-few-public-methods,
     too-many-function-args,
     useless-object-inheritance,
