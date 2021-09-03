@@ -1,0 +1,202 @@
+# XBMC Media Center language file
+msgid ""
+msgstr ""
+"Project-Id-Version: XBMC-Addons\n"
+"Report-Msgid-Bugs-To: dag@wieers.com\n"
+"POT-Creation-Date: 2018-04-13 03:00+0000\n"
+"PO-Revision-Date: 2021-09-04 03:00+0000\n"
+"Last-Translator: JuenTingShie <t104340042@ntut.org.tw>\n"
+"Language-Team: zh\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgctxt "#32100"
+msgid "Display"
+msgstr "顯示"
+
+msgctxt "#32101"
+msgid "Pick a method for turning off your display"
+msgstr "選擇關閉顯示器的方式"
+
+msgctxt "#32102"
+msgid "Display method"
+msgstr "顯示方式"
+
+msgctxt "#32103"
+msgid "Not all 'Display methods' work on every system. Carefully test."
+msgstr "'顯示方式'不一定適用於所有系統，請小心測試"
+
+msgctxt "#32104"
+msgid "- CEC methods require CEC device support. Check vendor manual."
+msgstr "- CEC 模式需要支援 CEC 的裝置。請檢查出廠說明書"
+
+msgctxt "#32105"
+msgid "- No Signal method disables video signal to display device."
+msgstr "- 無訊號模式會停用傳輸影像訊號至顯示器"
+
+msgctxt "#32106"
+msgid "- DPMS methods make use of VESA DPMS DPMS of your monitor."
+msgstr "- DPMS 模式使用顯示器的 VESA DPMS 相容性"
+
+msgctxt "#32107"
+msgid "Press HOME or BACK key on remote to return from screen saver."
+msgstr "按下遙控器的 家目錄 或 返回 按鈕以從螢幕保護畫面返回"
+
+msgctxt "#32108"
+msgid "NOTE: Not every device can be powered on automatically."
+msgstr "注意：並非所有裝置都能夠被自動啟動"
+
+msgctxt "#32110"
+msgid "Do nothing"
+msgstr "不做任何事"
+
+msgctxt "#32111"
+msgid "CEC (built-in)"
+msgstr "CEC (內建)"
+
+msgctxt "#32112"
+msgid "No Signal on Raspberry Pi (using vcgencmd)"
+msgstr "Raspberry Pi的 無訊號 (利用 vcgencmd)"
+
+msgctxt "#32113"
+msgid "DPMS (built-in)"
+msgstr "DPMS (內建)"
+
+msgctxt "#32114"
+msgid "DPMS (using xset)"
+msgstr "DPMS (利用 xset)"
+
+msgctxt "#32115"
+msgid "DPMS (using vbetool)"
+msgstr "DPMS (利用 vbetool)"
+
+msgctxt "#32116"
+msgid "DPMS (using xrandr)"
+msgstr "DPMS (利用 xrandr)"
+
+msgctxt "#32117"
+msgid "CEC on Android (kernel)"
+msgstr "Android 的 CEC (內核)"
+
+msgctxt "#32118"
+msgid "Backlight on Raspberry Pi (kernel)"
+msgstr "Raspberry Pi 的背光 (內核)"
+
+msgctxt "#32119"
+msgid "Backlight on Odroid C2 (kernel)"
+msgstr "Odroid C2 的背光 (內核)"
+
+msgctxt "#32200"
+msgid "Power"
+msgstr "電源"
+
+msgctxt "#32201"
+msgid "Pick a method for turning off your system"
+msgstr "選擇關閉系統的方式"
+
+msgctxt "#32202"
+msgid "Power method"
+msgstr "電源模式"
+
+msgctxt "#32203"
+msgid "Don't change this unless you know exactly what you are doing."
+msgstr "請勿修改本項目，除非您完全了解您正在做什麼"
+
+msgctxt "#32210"
+msgid "Do nothing"
+msgstr "不做任何事"
+
+msgctxt "#32211"
+msgid "Suspend (built-in)"
+msgstr "暫停 (內建)"
+
+msgctxt "#32212"
+msgid "Hibernate (built-in)"
+msgstr "休眠 (內建)"
+
+msgctxt "#32213"
+msgid "Quit (built-in)"
+msgstr "退出 (內建)"
+
+msgctxt "#32214"
+msgid "Shutdown action (built-in)"
+msgstr "關機動作 (內建)"
+
+msgctxt "#32215"
+msgid "Reboot (built-in)"
+msgstr "重新開機 (內建)"
+
+msgctxt "#32216"
+msgid "Powerdown (built-in)"
+msgstr "關閉電源 (內建)"
+
+msgctxt "#32217"
+msgid "Android POWER key event (using input)"
+msgstr "Android 電源按鍵事件 (利用輸入)"
+
+msgctxt "#32300"
+msgid "Options"
+msgstr "選項"
+
+msgctxt "#32301"
+msgid "When activating screensaver..."
+msgstr "當啟用螢幕保護..."
+
+msgctxt "#32311"
+msgid "Log off user"
+msgstr "登出使用者"
+
+msgctxt "#32312"
+msgid "Useful in case you have parental controls enabled."
+msgstr "在家長控制開啟時才有作用"
+
+msgctxt "#32321"
+msgid "Mute audio"
+msgstr "禁音"
+
+msgctxt "#32322"
+msgid "Ensure no audio is produced inadvertently, e.g. when using A/V receiver."
+msgstr "確認沒有不經意間的的音訊產生，例如：使用 A/V 接收器時"
+
+msgctxt "#32400"
+msgid "Expert"
+msgstr "匯出"
+
+msgctxt "#32401"
+msgid "Test drive this screensaver configuration"
+msgstr "測試此螢幕保護設定"
+
+msgctxt "#32411"
+msgid "Enable Screensaver"
+msgstr "啟用螢幕保護"
+
+msgctxt "#32412"
+msgid "Activate Screensaver"
+msgstr "啟動螢幕保護"
+
+msgctxt "#32420"
+msgid "Logging"
+msgstr "紀錄中"
+
+msgctxt "#32421"
+msgid "Log level"
+msgstr "紀錄層級"
+
+msgctxt "#32430"
+msgid "Quiet"
+msgstr "靜默"
+
+msgctxt "#32431"
+msgid "Info"
+msgstr "內容"
+
+msgctxt "#32432"
+msgid "Verbose"
+msgstr "參數"
+
+msgctxt "#32433"
+msgid "Debug"
+msgstr "偵錯"
