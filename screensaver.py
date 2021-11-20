@@ -4,10 +4,15 @@
 ''' This Kodi addon turns off display devices when Kodi goes into screensaver-mode '''
 
 from __future__ import absolute_import, division, unicode_literals
+import os
 import sys
 import atexit
 from xbmc import Monitor
 from xbmcgui import WindowXMLDialog
+
+# On some systems, commands might be in directories not on PATH env var, e.g. `vcgencmd` is under
+# /opt/vc/bin/ on OSMC. Add these paths to ensure the commands work on all systems.
+PATH = ':'.join((os.environ.get('PATH', ''),'/opt/vc/bin'))
 
 # NOTE: The below order relates to resources/settings.xml
 DISPLAY_METHODS = [
@@ -212,7 +217,7 @@ def run_command(*command, **kwargs):
     import subprocess
     # TODO: Add options for running using su or sudo
     try:
-        cmd = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False, **kwargs)
+        cmd = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False, env={"PATH": PATH}, **kwargs)
         (out, err) = cmd.communicate()
         if cmd.returncode == 0:
             log(2, "Running command '{command}' returned rc={rc}", command=' '.join(command), rc=cmd.returncode)
