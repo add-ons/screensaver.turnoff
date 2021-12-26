@@ -326,7 +326,9 @@ def run():
     from xbmc import getCondVisibility
 
     # If player has media, avoid running
-    if getCondVisibility("Player.HasMedia"):
+    # Exception for method 8 (DSI Display on Raspberry)
+    display_method = int(get_setting('display_method', 0))
+    if getCondVisibility("Player.HasMedia") and display_method != 8:
         log(1, 'Screensaver not started because player has media.')
         return
 
