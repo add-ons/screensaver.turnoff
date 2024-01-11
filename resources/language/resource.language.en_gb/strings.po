@@ -82,10 +82,14 @@ msgid "CEC on Android (kernel)"
 msgstr ""
 
 msgctxt "#32118"
-msgid "Backlight on Raspberry Pi (kernel)"
+msgid "CEC on Android 11 (kernel)"
 msgstr ""
 
 msgctxt "#32119"
+msgid "Backlight on Raspberry Pi (kernel)"
+msgstr ""
+
+msgctxt "#32120"
 msgid "Backlight on Odroid C2 (kernel)"
 msgstr ""
 

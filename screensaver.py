@@ -45,6 +45,10 @@ DISPLAY_METHODS = [
          function='run_command',
          args_off=['su', '-c', 'echo 0 >/sys/devices/virtual/graphics/fb0/cec'],
          args_on=['su', '-c', 'echo 1 >/sys/devices/virtual/graphics/fb0/cec']),
+    dict(name='cec-android11', title='CEC on Android11 (kernel)',
+         function='run_command',
+         args_off=['su', '-c', 'echo 0x40 0x36 > /sys/class/cec/cmd'],
+         args_on=['su', '-c', 'echo 0x40 0x04 > /sys/class/cec/cmd']),
     # NOTE: Contrary to what one might think, 1 means off and 0 means on
     dict(name='backlight-rpi', title='Backlight on Raspberry Pi (kernel)',
          function='run_command',
